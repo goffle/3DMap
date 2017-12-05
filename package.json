@@ -1,0 +1,28 @@
+{
+  "name": "3DMap",
+  "version": "1.0.0",
+  "description": "3D map of the world",
+  "main": "index.js",
+  "repository": "https://github.com/goffle/3DMap.git",
+  "author": "goffle <se.legoff@gmail.com>",
+  "license": "MIT",
+  "scripts": {
+    "build": "webpack --env dev && webpack --env build && npm run test",
+    "dev": "webpack-dev-server --config webpack.config.js"
+  },
+  "devDependencies": {
+    "babel-cli": "^6.26.0",
+    "babel-core": "^6.26.0",
+    "babel-eslint": "^8.0.2",
+    "babel-loader": "^7.1.2",
+    "babel-plugin-add-module-exports": "^0.2.1",
+    "babel-preset-es2015": "^6.24.1",
+    "chai": "^4.1.2",
+    "eslint": "^4.12.0",
+    "eslint-loader": "^1.9.0",
+    "mocha": "^4.0.1",
+    "webpack": "^3.8.1",
+    "webpack-dev-server": "^2.9.5",
+    "yargs": "^10.0.3"
+  }
+}
