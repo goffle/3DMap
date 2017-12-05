@@ -1,11 +1,14 @@
 var THREE = require('three');
+import OrbitControls from "./OrbitControls";
 
-console.log('Run engine')
 
-var camera, scene, renderer;
+
+
+var camera, scene, renderer, controls;
 var geometry, material, mesh;
 
 init();
+initMap();
 animate();
 
 function init() {
@@ -15,7 +18,7 @@ function init() {
 
     scene = new THREE.Scene();
 
-    geometry = new THREE.BoxGeometry(0.2, 0.2, 0.2);
+    geometry = new THREE.BoxGeometry(0.1, 0.2, 0.2);
     material = new THREE.MeshNormalMaterial();
 
     mesh = new THREE.Mesh(geometry, material);
@@ -25,6 +28,17 @@ function init() {
     renderer.setSize(window.innerWidth, window.innerHeight);
     document.getElementById('world').appendChild(renderer.domElement);
 
+    controls = new THREE.OrbitControls(camera, renderer.domElement);
+}
+
+function initMap() {
+
+    var geom = new THREE.PlaneBufferGeometry(2, 2, 1);
+    var mesh = new THREE.Mesh(geom,material);
+    mesh.renderOrder = 0;
+    mesh.rotation.x = -90 * Math.PI / 180;
+
+    scene.add(mesh);
 }
 
 function animate() {
