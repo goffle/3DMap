@@ -5,7 +5,7 @@ const UglifyJsPlugin = webpack.optimize.UglifyJsPlugin;
 const path = require('path');
 const WebpackDevServer = require('webpack-dev-server');
 
-const libraryName = 'library';
+const libraryName = 'map';
 let plugins = [];
 
 const outputFile = libraryName + '.js';
@@ -25,11 +25,6 @@ const config = {
             {
                 test: /(\.jsx|\.js)$/,
                 loader: 'babel-loader',
-                exclude: /node_modules/
-            },
-            {
-                test: /(\.jsx|\.js)$/,
-                loader: 'eslint-loader',
                 exclude: /node_modules/
             }
         ]

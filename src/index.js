@@ -1,4 +1,5 @@
 import json from '../package.json';
+import engine from './engine';
 
 export default class World {
   constructor(containerId) {
