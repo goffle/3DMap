@@ -37,7 +37,6 @@ Geo.unproject = function(point) {
 Geo.latLonToPoint = function(latlon) {
   var projected = Geo.project(latlon);
   projected.y *= -1;
-
   return projected;
 };
 

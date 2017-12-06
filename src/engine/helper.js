@@ -1,6 +1,5 @@
-function LatLon(lat, lon, alt = 0) {
-    return { lat, lon, alt }
-}
+import { latLon as LatLon } from './geo/LatLon';
+import world from './world';
 
 
 function quadcodeToVec3(quadcode) {
@@ -24,7 +23,7 @@ function quadcodeToVec3(quadcode) {
     return [x, y, z];
 }
 
-function tileBoundsFromWGS84(boundsWGS84, world) {
+function tileBoundsFromWGS84(boundsWGS84) {
     var sw = world.latLonToPoint(LatLon(boundsWGS84[1], boundsWGS84[0]));
     var ne = world.latLonToPoint(LatLon(boundsWGS84[3], boundsWGS84[2]));
     return [sw.x, sw.y, ne.x, ne.y];
@@ -49,8 +48,15 @@ function tile2lat(y, z) {
     return r2d * Math.atan(0.5 * (Math.exp(n) - Math.exp(-n)));
 }
 
+function boundsToCenter(bounds) {
+    var x = bounds[0] + (bounds[2] - bounds[0]) / 2;
+    var y = bounds[1] + (bounds[3] - bounds[1]) / 2;
+    return [x, y];
+}
 
 export default {
     quadcodeToVec3,
-    tileBoundsWGS84
+    tileBoundsWGS84,
+    tileBoundsFromWGS84,
+    boundsToCenter
 }

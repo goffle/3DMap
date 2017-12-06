@@ -1,4 +1,3 @@
-var THREE = require('three');
 
 /**
  * @author qiao / https://github.com/qiao

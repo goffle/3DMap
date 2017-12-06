@@ -1,5 +1,8 @@
-var THREE = require('three');
+//var THREE = require('three');
+
 import OrbitControls from "./camera/OrbitControls";
+import World from './world';
+import { latLon as LatLon } from './geo/LatLon';
 
 import imageMap from './imageMap';
 
@@ -8,18 +11,32 @@ var camera, scene, renderer, controls;
 var geometry, material, mesh;
 
 init();
-initMap();
+//initMap();
 animate();
 runMapBox();
 
+
+
 function runMapBox() {
+    World.setView(LatLon([1.339560, 103.844943]));
     const r = new imageMap('http://{s}.basemaps.cartocdn.com/light_nolabels/{z}/{x}/{y}.png', camera, scene);
+
+}
+
+function project(latlon) {
+    return Geo.latLonToPoint(latlon);
+}
+
+function latLonToPoint(latlon) {
+    var projectedPoint = this.project(latlon);
+    return projectedPoint._subtract(this._originPoint);
 }
 
 
+
 function init() {
-    camera = new THREE.PerspectiveCamera(70, window.innerWidth / window.innerHeight, 0.01, 10);
-    camera.position.z = 1;
+    camera = new THREE.PerspectiveCamera(70, window.innerWidth / window.innerHeight, 0.01, 100000);
+    camera.position.z = 1000;
 
     scene = new THREE.Scene();
 
