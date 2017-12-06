@@ -35,7 +35,7 @@ function latLonToPoint(latlon) {
 
 
 function init() {
-    camera = new THREE.PerspectiveCamera(70, window.innerWidth / window.innerHeight, 0.01, 100000);
+    camera = new THREE.PerspectiveCamera(70, window.innerWidth / window.innerHeight, 100, 10000000);
     camera.position.z = 1000;
 
     scene = new THREE.Scene();

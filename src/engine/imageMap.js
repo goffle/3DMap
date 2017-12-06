@@ -8,16 +8,16 @@ export default class TileLayer {
         this._url = url;
         this._tiles = new THREE.Group();
         this._frustum = new THREE.Frustum();
-
+        this._tileList = [];
+        
         this._maxLOD = 23;
 
         scene.add(this._tiles);
 
-        this._calculateLOD();
-
-        // setInterval(() => {
-        //     this._calculateLOD();
-        // }, 5000);
+        setInterval(() => {
+            this._calculateLOD();
+            this._outputTiles();
+        }, 1000);
     }
 
     _updateFrustum() {
@@ -25,6 +25,35 @@ export default class TileLayer {
         projScreenMatrix.multiplyMatrices(this._camera.projectionMatrix, this._camera.matrixWorldInverse);
         this._frustum.setFromMatrix(this._camera.projectionMatrix);
         this._frustum.setFromMatrix(new THREE.Matrix4().multiplyMatrices(this._camera.projectionMatrix, this._camera.matrixWorldInverse));
+    }
+
+    _removeTiles() {
+        if (!this._tiles || !this._tiles.children) {
+            return;
+        }
+
+        for (var i = this._tiles.children.length - 1; i >= 0; i--) {
+            this._tiles.remove(this._tiles.children[i]);
+        }
+
+    }
+
+    _outputTiles() {
+
+        // Remove all tiles from layer
+        this._removeTiles();
+
+        // Add / re-add tiles
+        this._tileList.forEach(tile => {
+            // Are the mesh and texture ready?
+
+            // if (!tile.isReady()) {
+            //     return;
+            // }
+
+            // Add tile to layer (and to scene) if not already there
+            this._tiles.add(tile.getMesh());
+        });
     }
 
     _calculateLOD() {
@@ -41,12 +70,16 @@ export default class TileLayer {
         this._divide(checkList);
         console.log('after', checkList);
 
-        checkList.forEach((tile) => {
-            if (true) {
+        this._tileList = checkList.filter((tile, index) => {
+
+            if (!this._tileInFrustum(tile)) {
+                return false;
+            }
+            if (!tile.isInit()) {
                 tile.requestTileAsync();
             }
-            this._tiles.add(tile.getMesh());
-        })
+            return true;
+        });
     }
 
     _divide(checkList) {
@@ -72,10 +105,10 @@ export default class TileLayer {
                 checkList.splice(count, 1);
 
                 // 4b. Add 4 child items to the check list
-                checkList.push(new ImageTile(quadcode +'0', this._url));
-                checkList.push(new ImageTile(quadcode +'1', this._url));
-                checkList.push(new ImageTile(quadcode +'2', this._url));
-                checkList.push(new ImageTile(quadcode +'3', this._url));
+                checkList.push(new ImageTile(quadcode + '0', this._url));
+                checkList.push(new ImageTile(quadcode + '1', this._url));
+                checkList.push(new ImageTile(quadcode + '2', this._url));
+                checkList.push(new ImageTile(quadcode + '3', this._url));
 
                 // 4d. Continue the loop without increasing count
                 continue;

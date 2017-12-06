@@ -24,6 +24,7 @@ class ImageTile {
 
     this._mesh = new THREE.Object3D();
     this._isInit = false;
+    this._ready = false;
   }
 
   getBounds() {
@@ -32,6 +33,14 @@ class ImageTile {
 
   getCenter() {
     return this._center;
+  }
+
+  isInit(){
+    return this._isInit;
+  }
+
+  isReady(){
+    return this._ready;
   }
 
   getSide() {
