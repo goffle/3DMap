@@ -14,8 +14,6 @@ class ImageTile {
     this._quadcode = quadcode;
     this._tile = helper.quadcodeToVec3(quadcode);
     this._boundsLatLon = helper.tileBoundsWGS84(this._tile);
-
-
     this._boundsWorld = helper.tileBoundsFromWGS84(this._boundsLatLon);
     this._center = helper.boundsToCenter(this._boundsWorld);
     this._centerLatlon = world.pointToLatLon(Point(this._center[0], this._center[1]));
@@ -24,7 +22,7 @@ class ImageTile {
 
     this._mesh = new THREE.Object3D();
     this._isInit = false;
-    this._ready = false;
+    this._isReady = false;
   }
 
   getBounds() {
@@ -40,7 +38,7 @@ class ImageTile {
   }
 
   isReady(){
-    return this._ready;
+    return this._isReady;
   }
 
   getSide() {
@@ -140,7 +138,7 @@ class ImageTile {
       this._mesh.children[0].material.needsUpdate = true;
 
       this._texture = texture;
-      this._ready = true;
+      this._isReady = true;
     }, false);
 
     // image.addEventListener('progress', event => {}, false);

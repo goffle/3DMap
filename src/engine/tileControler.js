@@ -2,7 +2,7 @@ import { setInterval } from 'core-js/library/web/timers';
 import ImageTile from './imageTile'
 import TileCache from './tileCache';
 
-export default class TileLayer {
+export default class TileControler {
     constructor(url, camera, scene) {
 
         this._camera = camera;
@@ -143,7 +143,6 @@ export default class TileLayer {
         var bounds = tile.getBounds();
         return this._frustum.intersectsBox(new THREE.Box3(new THREE.Vector3(bounds[0], 0, bounds[3]), new THREE.Vector3(bounds[2], 0, bounds[1])));
     }
-
 
     _screenSpaceError(tile) {
         var minDepth = this._minLOD;
