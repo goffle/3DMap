@@ -1,5 +1,6 @@
 import { setInterval } from 'core-js/library/web/timers';
 import ImageTile from './imageTile'
+import TileCache from './tileCache';
 
 export default class TileLayer {
     constructor(url, camera, scene) {
@@ -9,8 +10,12 @@ export default class TileLayer {
         this._tiles = new THREE.Group();
         this._frustum = new THREE.Frustum();
         this._tileList = [];
-        
+
         this._maxLOD = 23;
+
+        this._tileCache = new TileCache(1000, tile => {
+            //this._destroyTile(tile);
+        });
 
         scene.add(this._tiles);
 
@@ -38,6 +43,21 @@ export default class TileLayer {
 
     }
 
+    _getTile(quadcode) {
+        var tile = this._tileCache.getTile(quadcode);
+
+        if (!tile) {
+            // Set up a brand new tile
+            tile = new ImageTile(quadcode, this._url);
+
+            // Add tile to cache, though it won't be ready yet as the data is being
+            // requested from various places asynchronously
+            this._tileCache.setTile(quadcode, tile);
+        }
+
+        return tile;
+    }
+
     _outputTiles() {
 
         // Remove all tiles from layer
@@ -61,14 +81,13 @@ export default class TileLayer {
         this._updateFrustum();
 
         var checkList = [];
-        checkList.push(new ImageTile('0', this._url));
-        checkList.push(new ImageTile('1', this._url));
-        checkList.push(new ImageTile('2', this._url));
-        checkList.push(new ImageTile('3', this._url));
+        checkList.push(this._getTile('0'));
+        checkList.push(this._getTile('1'));
+        checkList.push(this._getTile('2'));
+        checkList.push(this._getTile('3'));
 
-        console.log('before', checkList);
         this._divide(checkList);
-        console.log('after', checkList);
+
 
         this._tileList = checkList.filter((tile, index) => {
 
@@ -105,10 +124,11 @@ export default class TileLayer {
                 checkList.splice(count, 1);
 
                 // 4b. Add 4 child items to the check list
-                checkList.push(new ImageTile(quadcode + '0', this._url));
-                checkList.push(new ImageTile(quadcode + '1', this._url));
-                checkList.push(new ImageTile(quadcode + '2', this._url));
-                checkList.push(new ImageTile(quadcode + '3', this._url));
+
+                checkList.push(this._getTile(quadcode + '0'));
+                checkList.push(this._getTile(quadcode + '1'));
+                checkList.push(this._getTile(quadcode + '2'));
+                checkList.push(this._getTile(quadcode + '3'));
 
                 // 4d. Continue the loop without increasing count
                 continue;
