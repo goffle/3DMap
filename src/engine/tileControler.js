@@ -1,5 +1,8 @@
 import { setInterval } from 'core-js/library/web/timers';
-import ImageTile from './imageTile'
+
+import ImageTile from './tileImage';
+import TopoTile from './tileTopo';
+
 import TileCache from './tileCache';
 
 export default class TileControler {
@@ -40,16 +43,19 @@ export default class TileControler {
         for (var i = this._tiles.children.length - 1; i >= 0; i--) {
             this._tiles.remove(this._tiles.children[i]);
         }
-
     }
 
     _getTile(quadcode) {
         var tile = this._tileCache.getTile(quadcode);
-
         if (!tile) {
-            // Set up a brand new tile
-            tile = new ImageTile(quadcode, this._url);
 
+            // Set up a brand new tile
+            
+            //tile = new ImageTile(quadcode, this._url);
+            tile = new TopoTile(quadcode, 'https://tile.mapzen.com/mapzen/vector/v1/buildings/{z}/{x}/{y}.topojson?api_key=mapzen-WKzBDto');
+            
+            
+            
             // Add tile to cache, though it won't be ready yet as the data is being
             // requested from various places asynchronously
             this._tileCache.setTile(quadcode, tile);
@@ -59,7 +65,6 @@ export default class TileControler {
     }
 
     _outputTiles() {
-
         // Remove all tiles from layer
         this._removeTiles();
 
@@ -87,7 +92,6 @@ export default class TileControler {
         checkList.push(this._getTile('3'));
 
         this._divide(checkList);
-
 
         this._tileList = checkList.filter((tile, index) => {
 
@@ -124,7 +128,6 @@ export default class TileControler {
                 checkList.splice(count, 1);
 
                 // 4b. Add 4 child items to the check list
-
                 checkList.push(this._getTile(quadcode + '0'));
                 checkList.push(this._getTile(quadcode + '1'));
                 checkList.push(this._getTile(quadcode + '2'));

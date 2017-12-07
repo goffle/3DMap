@@ -4,10 +4,6 @@ import { latLon as LatLon } from './geo/LatLon';
 import world from './world';
 import helper from './helper';
 
-// TODO: Make sure nothing is left behind in the heap after calling destroy()
-
-
-
 class ImageTile {
   constructor(quadcode, path) {
     this._path = path;

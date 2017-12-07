@@ -21,15 +21,22 @@ function init() {
     renderer = new THREE.WebGLRenderer({ antialias: true });
     renderer.setSize(window.innerWidth, window.innerHeight);
     document.getElementById('world').appendChild(renderer.domElement);
-    
+
     controls = new THREE.OrbitControls(camera, renderer.domElement);
 
-    
+
     World.setView(LatLon([1.339560, 103.844943]));
 
 }
 
 function runMapBox() {
+
+    //http://tile.mapzen.com/mapzen/vector/v1/{layers}/{z}/{x}/{y}.{format}?api_key=mapzen-WKzBDto
+    //http://tile.mapzen.com/mapzen/vector/v1/{layers}/{z}/{x}/{y}.{format}?api_key=mapzen-WKzBDto
+
+    
+    //https://tile.mapzen.com/mapzen/vector/v1/buildings/{z}/{x}/{y}.topojson?api_key=mapzen-WKzBDto
+
     const r = new TileControler('http://{s}.basemaps.cartocdn.com/light_nolabels/{z}/{x}/{y}.png', camera, scene);
 }
 
