@@ -5,7 +5,6 @@ import { latLon as LatLon } from './geo/LatLon';
 
 class World {
   constructor() {
-    console.log('New world')
   }
 
   setView(latlon) {

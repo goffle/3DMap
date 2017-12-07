@@ -50,12 +50,12 @@ export default class TileControler {
         if (!tile) {
 
             // Set up a brand new tile
-            
+
             //tile = new ImageTile(quadcode, this._url);
             tile = new TopoTile(quadcode, 'https://tile.mapzen.com/mapzen/vector/v1/buildings/{z}/{x}/{y}.topojson?api_key=mapzen-WKzBDto');
-            
-            
-            
+
+
+
             // Add tile to cache, though it won't be ready yet as the data is being
             // requested from various places asynchronously
             this._tileCache.setTile(quadcode, tile);
@@ -94,6 +94,14 @@ export default class TileControler {
         this._divide(checkList);
 
         this._tileList = checkList.filter((tile, index) => {
+
+            // TODO: Can probably speed this up
+            var center = tile.getCenter();
+            var dist = (new THREE.Vector3(center[0], 0, center[1])).sub(this._camera.position).length();
+
+            if (dist > 10000) {
+                return false;
+            }
 
             if (!this._tileInFrustum(tile)) {
                 return false;
