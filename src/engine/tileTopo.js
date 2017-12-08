@@ -1,7 +1,12 @@
+import geojsonMerge from 'geojson-merge';
+import * as topojson from 'topojson';
+
+
 import { point as Point } from './geo/Point';
 import { latLon as LatLon } from './geo/LatLon';
-import GeoJSON from './util/GeoJSON';
 
+
+import createPolygon from  './geometry/Polygon';
 import PolygonLayer from './geometry/PolygonLayer';
 // import PolylineLayer from './geometry/PolylineLayer';
 // import PointLayer from './geometry/PointLayer';
@@ -105,28 +110,28 @@ class TopoTile {
   //   });
   // }
 
+  _collectFeatures(data) {
+    var collections = [];
+    for (var tk in data.objects) {
+      collections.push(topojson.feature(data, data.objects[tk]));
+    }
+    return geojsonMerge(collections);
+  };
+
+
   _processData(data) {
 
     // Also converts TopoJSON to GeoJSON if instructed
 
-    this._geojson = GeoJSON.collectFeatures(data, {});
-
-    // TODO: Check that GeoJSON is valid / usable
-
-
-
+    const geojson = this._collectFeatures(data);
     const meshs = [];
 
-    const features = this._geojson.features;
+    const features = geojson.features;
     features.forEach(feature => {
-      var layer = this._featureToLayer(feature, { style: GeoJSON.defaultStyle });
-      if (!layer) {
-        return;
+      var mesh = this.getMeshFromFeature(feature);
+      if (mesh) {
+        meshs.push(mesh);
       }
-
-      const mesh = layer.getMesh();
-
-      meshs.push(mesh);
     });
 
 
@@ -195,18 +200,23 @@ class TopoTile {
 
 
 
-  _featureToLayer(feature, options) {
+  getMeshFromFeature(feature) {
     var geometry = feature.geometry;
     var coordinates = (geometry.coordinates) ? geometry.coordinates : null;
+    var mesh = null;
 
     if (!coordinates || !geometry) {
       return;
     }
 
     if (geometry.type === 'Polygon' || geometry.type === 'MultiPolygon') {
-      return new PolygonLayer(coordinates, options);
+
+      mesh = createPolygon(coordinates);
+     // mesh = new PolygonLayer(coordinates).getMesh();
     }
 
+
+    return mesh;
 
     // if (geometry.type === 'LineString' || geometry.type === 'MultiLineString') {
     //   // Pass onBufferAttributes callback, if defined

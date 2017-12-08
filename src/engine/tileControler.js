@@ -6,9 +6,10 @@ import TopoTile from './tileTopo';
 import TileCache from './tileCache';
 
 export default class TileControler {
-    constructor(url, camera, scene) {
+    constructor(url, type, camera, scene) {
 
         this._camera = camera;
+        this._type = type;
         this._url = url;
         this._tiles = new THREE.Group();
         this._frustum = new THREE.Frustum();
@@ -48,14 +49,11 @@ export default class TileControler {
     _getTile(quadcode) {
         var tile = this._tileCache.getTile(quadcode);
         if (!tile) {
-
-            // Set up a brand new tile
-
-            //tile = new ImageTile(quadcode, this._url);
-            tile = new TopoTile(quadcode, 'https://tile.mapzen.com/mapzen/vector/v1/buildings/{z}/{x}/{y}.topojson?api_key=mapzen-WKzBDto');
-
-
-
+            if (this._type === 'image') {
+                tile = new ImageTile(quadcode, this._url);
+            } else if (this._type === 'topo') {
+                tile = new TopoTile(quadcode, this._url);
+            }
             // Add tile to cache, though it won't be ready yet as the data is being
             // requested from various places asynchronously
             this._tileCache.setTile(quadcode, tile);
@@ -99,7 +97,7 @@ export default class TileControler {
             var center = tile.getCenter();
             var dist = (new THREE.Vector3(center[0], 0, center[1])).sub(this._camera.position).length();
 
-            if (dist > 10000) {
+            if (dist > 7000) {
                 return false;
             }
 

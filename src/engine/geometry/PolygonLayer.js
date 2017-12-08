@@ -171,10 +171,6 @@ class PolygonLayer {
         facesCount: _faces.length
       };
 
-      if (this._options.interactive && this._pickingId) {
-        // Inject picking ID
-        polygon.pickingId = this._pickingId;
-      }
 
       // Convert polygon representation to proper attribute arrays
       return this._toAttributes(polygon);
@@ -223,7 +219,7 @@ class PolygonLayer {
 
     geometry.computeBoundingBox();
 
-    var material = new THREE.MeshNormalMaterial();
+    var material = new THREE.MeshPhongMaterial();
 
     /*
     if (this._options.material && this._options.material instanceof THREE.Material) {
@@ -239,14 +235,14 @@ class PolygonLayer {
     }*/
 
     var mesh = new THREE.Mesh(geometry, material);
-    mesh.castShadow = true;
-    mesh.receiveShadow = true;
+    // mesh.castShadow = true;
+    // mesh.receiveShadow = true;
 
 
-    if (this.isFlat()) {
-      material.depthWrite = false;
-      mesh.renderOrder = 1;
-    }
+    // if (this.isFlat()) {
+    //   material.depthWrite = false;
+    //   mesh.renderOrder = 1;
+    // }
 
     this._mesh = mesh;
   }
@@ -260,6 +256,8 @@ class PolygonLayer {
 
     this._projectedBounds = [];
     this._projectedCoordinates = this._projectCoordinates();
+
+    debugger;
 
     this._center = this._coordinates[0][0][0];
   }
