@@ -6,7 +6,7 @@ import { point as Point } from './geo/Point';
 import { latLon as LatLon } from './geo/LatLon';
 
 
-import createPolygon from  './geometry/Polygon';
+import createPolygon from './geometry/Polygon';
 import PolygonLayer from './geometry/PolygonLayer';
 // import PolylineLayer from './geometry/PolylineLayer';
 // import PointLayer from './geometry/PointLayer';
@@ -30,7 +30,7 @@ class TopoTile {
 
     this._mesh = new THREE.Group();
     this._isInit = false;
-    this._isReady = false;
+    this._isReady = true;
   }
 
   getBounds() {
@@ -128,6 +128,7 @@ class TopoTile {
 
     const features = geojson.features;
     features.forEach(feature => {
+
       var mesh = this.getMeshFromFeature(feature);
       if (mesh) {
         meshs.push(mesh);
@@ -203,16 +204,18 @@ class TopoTile {
   getMeshFromFeature(feature) {
     var geometry = feature.geometry;
     var coordinates = (geometry.coordinates) ? geometry.coordinates : null;
+    var height = feature.properties.height;
     var mesh = null;
 
     if (!coordinates || !geometry) {
       return;
     }
 
+
     if (geometry.type === 'Polygon' || geometry.type === 'MultiPolygon') {
 
-      mesh = createPolygon(coordinates);
-     // mesh = new PolygonLayer(coordinates).getMesh();
+      mesh = createPolygon(coordinates, height);
+      // mesh = new PolygonLayer(coordinates).getMesh();
     }
 
 

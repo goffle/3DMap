@@ -66,9 +66,6 @@ class ImageTile {
     return (new THREE.Vector3(bounds[0], 0, bounds[3])).sub(new THREE.Vector3(bounds[0], 0, bounds[1])).length();
   }
 
-
-
-
   _createMesh() {
     // Something went wrong and the tile
     //

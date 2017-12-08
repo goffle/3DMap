@@ -23,24 +23,21 @@ import Buffer from '../util/Buffer';
 import world from './../world';
 
 
-export default function createPolygon(originalCoordinates) {
+export default function createPolygon(originalCoordinates, height = 16) {
 
   const coordinates = isSingle(originalCoordinates) ? [originalCoordinates] : originalCoordinates;
 
   var projectedCoordinates = projectandconverteCoordinates(coordinates);
 
-  const buffersAttributes = getBufferAttributes(projectedCoordinates);
+  const buffersAttributes = getBufferAttributes(projectedCoordinates, height);
 
   return createMesh(buffersAttributes);
 }
 
 
-function getBufferAttributes(projectedCoordinates) {
+function getBufferAttributes(projectedCoordinates, height) {
 
   var attributes;
-
-  var height = 50;//world.metresToWorld(this._options.style.height, this._pointScale);
-
 
   var colour = new THREE.Color(0x666666);
 

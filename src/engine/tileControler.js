@@ -36,15 +36,7 @@ export default class TileControler {
         this._frustum.setFromMatrix(new THREE.Matrix4().multiplyMatrices(this._camera.projectionMatrix, this._camera.matrixWorldInverse));
     }
 
-    _removeTiles() {
-        if (!this._tiles || !this._tiles.children) {
-            return;
-        }
 
-        for (var i = this._tiles.children.length - 1; i >= 0; i--) {
-            this._tiles.remove(this._tiles.children[i]);
-        }
-    }
 
     _getTile(quadcode) {
         var tile = this._tileCache.getTile(quadcode);
@@ -63,16 +55,24 @@ export default class TileControler {
     }
 
     _outputTiles() {
+
+        console.log(this._tiles.children.length)
         // Remove all tiles from layer
-        this._removeTiles();
+        if (!this._tiles || !this._tiles.children) {
+            return;
+        }
+
+        for (var i = this._tiles.children.length - 1; i >= 0; i--) {
+            this._tiles.remove(this._tiles.children[i]);
+        }
 
         // Add / re-add tiles
         this._tileList.forEach(tile => {
             // Are the mesh and texture ready?
 
-            // if (!tile.isReady()) {
-            //     return;
-            // }
+            if (!tile.isReady()) {
+                return;
+            }
 
             // Add tile to layer (and to scene) if not already there
             this._tiles.add(tile.getMesh());
@@ -90,6 +90,11 @@ export default class TileControler {
         checkList.push(this._getTile('3'));
 
         this._divide(checkList);
+
+        checkList.sort((a, b) => {
+            return a._quadcode.length < b._quadcode.length;
+        });
+
 
         this._tileList = checkList.filter((tile, index) => {
 
