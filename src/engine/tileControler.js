@@ -69,8 +69,8 @@ export default class TileControler {
         for (var i = 0; i < this._tiles.children.length; i++) {
             count += this._tiles.children[i].children.length;
         }
-        console.log('Meshs : ' + count);
-        console.log('Tiles :' + this._tiles.children.length);
+        // console.log('Meshs : ' + count);
+        // console.log('Tiles :' + this._tiles.children.length);
 
         for (var i = this._tiles.children.length - 1; i >= 0; i--) {
             this._tiles.remove(this._tiles.children[i]);

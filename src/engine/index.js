@@ -15,9 +15,9 @@ animate();
 
 function init() {
     camera = new THREE.PerspectiveCamera(70, window.innerWidth / window.innerHeight, 100, 10000000);
-    camera.position.x = 110;
-    camera.position.y = 572;
-    camera.position.z = 1000;
+    camera.position.x = 20;
+    camera.position.y = 580;
+    camera.position.z = 300;
 
     scene = new THREE.Scene();
 
@@ -49,7 +49,7 @@ function runMapBox() {
 
     //https://tile.mapzen.com/mapzen/vector/v1/buildings/{z}/{x}/{y}.topojson?api_key=mapzen-WKzBDto
 
-    //const r = new TileControler('http://{s}.basemaps.cartocdn.com/light_nolabels/{z}/{x}/{y}.png', 'image', camera, scene);
+    const r = new TileControler('http://{s}.basemaps.cartocdn.com/light_nolabels/{z}/{x}/{y}.png', 'image', camera, scene);
     const s = new TileControler('https://tile.mapzen.com/mapzen/vector/v1/buildings/{z}/{x}/{y}.topojson?api_key=mapzen-WKzBDto', 'topo', camera, scene);
 }
 

@@ -30,8 +30,7 @@ export default function createPolygon(originalCoordinates, height = 16) {
   var projectedCoordinates = projectandconverteCoordinates(coordinates);
 
   const buffersAttributes = getBufferAttributes(projectedCoordinates, height);
-
-  return createMesh(buffersAttributes);
+  return createGeometry(buffersAttributes);
 }
 
 
@@ -239,7 +238,7 @@ function toAttributes(polygon) {
   return attributes;
 }
 
-function createMesh(attributes) {
+function createGeometry(attributes) {
   var geometry = new THREE.BufferGeometry();
 
   // itemSize = 3 because there are 3 values (components) per vertex
@@ -248,9 +247,7 @@ function createMesh(attributes) {
   geometry.addAttribute('color', new THREE.BufferAttribute(attributes.colours, 3));
 
   geometry.computeBoundingBox();
-  var material = new THREE.MeshLambertMaterial({ color: 0xE8E5DE, emissive: 0x313131, side: THREE.BackSide });
-  var mesh = new THREE.Mesh(geometry, material);
-  return mesh;
+  return geometry;
 }
 
 function isSingle(coordinates) {

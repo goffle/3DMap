@@ -12,6 +12,7 @@ import reqwest from 'reqwest';
 
 import world from './world';
 import helper from './helper';
+import { feature } from 'topojson';
 
 class TopoTile {
   constructor(quadcode, path) {
@@ -104,39 +105,49 @@ class TopoTile {
     }
     const geojson = geojsonMerge(collections);
 
-    const meshs = [];
+    var tmpGeometry = new THREE.Geometry();
+
+    //    const meshs = [];
 
     const features = geojson.features;
+    var mesh = this.getMeshFromFeatures(features);
+    if (mesh) {
+      this._mesh.add(mesh);
+    }
+
+  }
+
+  getMeshFromFeatures(features) {
+
+    const tmpGeometry = new THREE.Geometry();
+    let tag = false;
+
     features.forEach(feature => {
-      var mesh = this.getMeshFromFeature(feature);
-      if (mesh) {
-        meshs.push(mesh);
+      const { type, coordinates } = feature.geometry;
+      var height = feature.properties.height;
+
+      if (!coordinates) {
+        return;
+      }
+
+      if (type === 'Polygon' || type === 'MultiPolygon') {
+        var geometry = createPolygon(coordinates, height);
+        var pxTmpGeometry = new THREE.Geometry().fromBufferGeometry(geometry);
+        tmpGeometry.merge(pxTmpGeometry);
+        tag = true;
       }
     });
 
-    meshs.forEach(mesh => {
-      this._mesh.add(mesh);
-    })
-  }
-
-  getMeshFromFeature(feature) {
-    var geometry = feature.geometry;
-    var coordinates = (geometry.coordinates) ? geometry.coordinates : null;
-    var height = feature.properties.height;
-    var mesh = null;
-
-    if (!coordinates || !geometry) {
-      return;
+    if (!tag) {
+      return null;
     }
 
-    if (geometry.type === 'Polygon' || geometry.type === 'MultiPolygon') {
-      mesh = createPolygon(coordinates, height);
-    }
-
-    return mesh;
+    tmpGeometry.computeBoundingBox();
+    var material = new THREE.MeshLambertMaterial({ color: 0xE8E5DE, emissive: 0x313131, side: THREE.BackSide });
+    var mesh2 = new THREE.Mesh(tmpGeometry, material);
+    return mesh2;
 
   }
-
 
   _requestTile() {
 
