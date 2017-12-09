@@ -55,12 +55,22 @@ export default class TileControler {
     }
 
     _outputTiles() {
+        //tile in
+        //tile in new
+        //tile in not 
 
-        console.log(this._tiles.children.length)
         // Remove all tiles from layer
         if (!this._tiles || !this._tiles.children) {
             return;
         }
+
+
+        var count = 0;
+        for (var i = 0; i < this._tiles.children.length; i++) {
+            count += this._tiles.children[i].children.length;
+        }
+        console.log('Meshs : ' + count);
+        console.log('Tiles :' + this._tiles.children.length);
 
         for (var i = this._tiles.children.length - 1; i >= 0; i--) {
             this._tiles.remove(this._tiles.children[i]);

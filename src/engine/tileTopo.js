@@ -7,9 +7,6 @@ import { latLon as LatLon } from './geo/LatLon';
 
 
 import createPolygon from './geometry/Polygon';
-import PolygonLayer from './geometry/PolygonLayer';
-// import PolylineLayer from './geometry/PolylineLayer';
-// import PointLayer from './geometry/PointLayer';
 
 import reqwest from 'reqwest';
 
@@ -100,106 +97,27 @@ class TopoTile {
     });
   }
 
-  // _requestData(url) {
-  //   fetch(url).then(res => {
-  //     res.blob().then(data => {
-  //       this._processData(data);
-  //     })
-  //   }).catch(err => {
-  //     console.error(err);
-  //   });
-  // }
-
-  _collectFeatures(data) {
+  _processData(data) {
     var collections = [];
     for (var tk in data.objects) {
       collections.push(topojson.feature(data, data.objects[tk]));
     }
-    return geojsonMerge(collections);
-  };
+    const geojson = geojsonMerge(collections);
 
-
-  _processData(data) {
-
-    // Also converts TopoJSON to GeoJSON if instructed
-
-    const geojson = this._collectFeatures(data);
     const meshs = [];
 
     const features = geojson.features;
     features.forEach(feature => {
-
       var mesh = this.getMeshFromFeature(feature);
       if (mesh) {
         meshs.push(mesh);
       }
     });
 
-
     meshs.forEach(mesh => {
       this._mesh.add(mesh);
     })
-
-
-    //console.log(meshs);
-    // If merging layers do that now, otherwise skip as the geometry layers
-    // should have already outputted themselves
-    // if (!this.isOutput()) {
-    //   return;
-    // }
-
-    // From here on we can assume that we want to merge the layers
-
-    // var polygonAttributes = [];
-    // var polygonFlat = true;
-
-    // var polylineAttributes = [];
-    // var pointAttributes = [];
-
-    // layers.forEach(layer => {
-    //   if (layer instanceof PolygonLayer) {
-    //     polygonAttributes.push(layer.getBufferAttributes());
-
-    //     if (polygonFlat && !layer.isFlat()) {
-    //       polygonFlat = false;
-    //     }
-    //   } else if (layer instanceof PolylineLayer) {
-    //     polylineAttributes.push(layer.getBufferAttributes());
-    //   } else if (layer instanceof PointLayer) {
-    //     pointAttributes.push(layer.getBufferAttributes());
-    //   }
-    // });
-
-    // if (polygonAttributes.length > 0) {
-    //   var mergedPolygonAttributes = Buffer.mergeAttributes(polygonAttributes);
-    //   this._setPolygonMesh(mergedPolygonAttributes, polygonFlat);
-    //   this.add(this._polygonMesh);
-    // }
-
-    // if (polylineAttributes.length > 0) {
-    //   var mergedPolylineAttributes = Buffer.mergeAttributes(polylineAttributes);
-    //   this._setPolylineMesh(mergedPolylineAttributes);
-    //   this.add(this._polylineMesh);
-    // }
-
-    // if (pointAttributes.length > 0) {
-    //   var mergedPointAttributes = Buffer.mergeAttributes(pointAttributes);
-    //   this._setPointMesh(mergedPointAttributes);
-    //   this.add(this._pointMesh);
-    // }
-
-    // Clean up layers
-    //
-    // TODO: Are there ever situations where the unmerged buffer attributes
-    // and coordinates would still be required?
-
-    // layers.forEach(layer => {
-    //   layer.clearBufferAttributes();
-    //   layer.clearCoordinates();
-    // });
   }
-
-
 
   getMeshFromFeature(feature) {
     var geometry = feature.geometry;
@@ -211,32 +129,11 @@ class TopoTile {
       return;
     }
 
-
     if (geometry.type === 'Polygon' || geometry.type === 'MultiPolygon') {
-
       mesh = createPolygon(coordinates, height);
-      // mesh = new PolygonLayer(coordinates).getMesh();
     }
 
-
     return mesh;
-
-    // if (geometry.type === 'LineString' || geometry.type === 'MultiLineString') {
-    //   // Pass onBufferAttributes callback, if defined
-    //   if (typeof this._options.onPolylineBufferAttributes === 'function') {
-    //     options.onBufferAttributes = this._options.onPolylineBufferAttributes;
-    //   }
-    //   return new PolylineLayer(coordinates, options);
-    // }
-
-    // if (geometry.type === 'Point' || geometry.type === 'MultiPoint') {
-    //   if (typeof this._options.onPointMesh === 'function') {
-    //     options.onMesh = this._options.onPointMesh;
-    //   }
-    //   return new PointLayer(coordinates, options);
-    // }
-
-
 
   }
 

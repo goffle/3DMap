@@ -49,7 +49,7 @@ function runMapBox() {
 
     //https://tile.mapzen.com/mapzen/vector/v1/buildings/{z}/{x}/{y}.topojson?api_key=mapzen-WKzBDto
 
-    const r = new TileControler('http://{s}.basemaps.cartocdn.com/light_nolabels/{z}/{x}/{y}.png', 'image', camera, scene);
+    //const r = new TileControler('http://{s}.basemaps.cartocdn.com/light_nolabels/{z}/{x}/{y}.png', 'image', camera, scene);
     const s = new TileControler('https://tile.mapzen.com/mapzen/vector/v1/buildings/{z}/{x}/{y}.topojson?api_key=mapzen-WKzBDto', 'topo', camera, scene);
 }
 
