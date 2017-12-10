@@ -7,10 +7,10 @@ import { latLon as LatLon } from './geo/LatLon';
 import TileControler from './tileControler';
 
 
-var camera, scene, renderer, controls;
+var camera, scene, renderer, controls, imageTile, topoTile;
 
 init();
-runMapBox();
+runTiles();
 animate();
 
 function init() {
@@ -41,24 +41,26 @@ function init() {
 
 }
 
-function runMapBox() {
+function runTiles() {
 
     const ImageOptions = {
         maxDistance: 200000,
         maxLOD: 16,
         minLOD: 1
     }
-    const r = new TileControler('http://{s}.basemaps.cartocdn.com/light_nolabels/{z}/{x}/{y}.png', 'image', camera, controls, scene, ImageOptions);
+    imageTile = new TileControler('http://{s}.basemaps.cartocdn.com/light_nolabels/{z}/{x}/{y}.png', 'image', camera, controls, scene, ImageOptions);
 
     const topoOptions = {
-        maxDistance:  1000,
+        maxDistance: 1000,
         maxLOD: 16,
         minLOD: 16
     }
-    const s = new TileControler('https://tile.mapzen.com/mapzen/vector/v1/buildings/{z}/{x}/{y}.topojson?api_key=mapzen-JEvUQFv', 'topo', camera, controls, scene, topoOptions);
+    topoTile = new TileControler('https://tile.mapzen.com/mapzen/vector/v1/buildings/{z}/{x}/{y}.topojson?api_key=mapzen-JEvUQFv', 'topo', camera, controls, scene, topoOptions);
 }
 
 function animate() {
     requestAnimationFrame(animate);
+    topoTile.update();
+    imageTile.update();
     renderer.render(scene, camera);
 }

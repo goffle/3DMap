@@ -27,10 +27,12 @@ export default class TileControler {
 
         scene.add(this._tiles);
 
-        setInterval(() => {
-            this._calculateLOD();
-            this._outputTiles();
-        }, 2000);
+
+    }
+
+    update(){
+        this._calculateLOD();
+        this._outputTiles();
     }
 
     _updateFrustum() {
