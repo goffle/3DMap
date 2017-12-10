@@ -2,20 +2,24 @@ import { setInterval } from 'core-js/library/web/timers';
 
 import ImageTile from './tileImage';
 import TopoTile from './tileTopo';
+import ColorTile from './tileColor';
 
 import TileCache from './tileCache';
 
 export default class TileControler {
-    constructor(url, type, camera, scene) {
+    constructor(url, type, camera, controls, scene, options = {}) {
 
         this._camera = camera;
+        this._controls = controls;
         this._type = type;
         this._url = url;
         this._tiles = new THREE.Group();
         this._frustum = new THREE.Frustum();
         this._tileList = [];
 
-        this._maxLOD = 23;
+        this._maxLOD = options.maxLOD ? options.maxLOD : 23;
+        this._minLOD = options.minLOD ? options.minLOD : 1;
+        this._maxDistance = options.maxDistance ? options.maxDistance : 5000;
 
         this._tileCache = new TileCache(1000, tile => {
             //this._destroyTile(tile);
@@ -26,7 +30,7 @@ export default class TileControler {
         setInterval(() => {
             this._calculateLOD();
             this._outputTiles();
-        }, 1000);
+        }, 2000);
     }
 
     _updateFrustum() {
@@ -45,6 +49,8 @@ export default class TileControler {
                 tile = new ImageTile(quadcode, this._url);
             } else if (this._type === 'topo') {
                 tile = new TopoTile(quadcode, this._url);
+            } else if (this._type === 'debug') {
+                tile = new ColorTile(quadcode);
             }
             // Add tile to cache, though it won't be ready yet as the data is being
             // requested from various places asynchronously
@@ -79,11 +85,9 @@ export default class TileControler {
         // Add / re-add tiles
         this._tileList.forEach(tile => {
             // Are the mesh and texture ready?
-
             if (!tile.isReady()) {
                 return;
             }
-
             // Add tile to layer (and to scene) if not already there
             this._tiles.add(tile.getMesh());
         });
@@ -105,25 +109,13 @@ export default class TileControler {
             return a._quadcode.length < b._quadcode.length;
         });
 
-
         this._tileList = checkList.filter((tile, index) => {
-
-            // TODO: Can probably speed this up
-            var center = tile.getCenter();
-            var dist = (new THREE.Vector3(center[0], 0, center[1])).sub(this._camera.position).length();
-
-            if (dist > 7000) {
-                return false;
-            }
-
-            if (!this._tileInFrustum(tile)) {
-                return false;
-            }
             if (!tile.isInit()) {
                 tile.requestTileAsync();
             }
             return true;
         });
+
     }
 
     _divide(checkList) {
@@ -136,13 +128,16 @@ export default class TileControler {
             quadcode = currentItem.getQuadCode();
 
             // 2. Increase count and continue loop if quadcode equals max LOD / zoom
-            if (currentItem.length === this._maxLOD) {
+            if (quadcode.length >= this._maxLOD) {
                 count++;
                 continue;
             }
 
             // 3. Else, calculate screen-space error metric for quadcode
-            if (this._screenSpaceError(currentItem)) {
+
+            if (!this._tileInDistance(currentItem) || !this._tileInFrustum(currentItem)) {
+                checkList.splice(count, 1);
+            } else if (this._screenSpaceError(currentItem)) {
                 // 4. If error is sufficient...
 
                 // 4a. Remove parent item from the check list
@@ -157,7 +152,7 @@ export default class TileControler {
                 // 4d. Continue the loop without increasing count
                 continue;
             } else {
-                // 5. Else, increase count and continue loop
+
                 count++;
             }
         }
@@ -168,9 +163,21 @@ export default class TileControler {
         return this._frustum.intersectsBox(new THREE.Box3(new THREE.Vector3(bounds[0], 0, bounds[3]), new THREE.Vector3(bounds[2], 0, bounds[1])));
     }
 
+    _tileInDistance(tile) {
+        const cameraVec2 = new THREE.Vector2(this._controls.target.x, this._controls.target.z);
+        const center = new THREE.Vector2(tile.getCenter()[0], tile.getCenter()[1]);
+        const round = (tile.getSide() / Math.sqrt(2));
+        const dist = cameraVec2.distanceTo(center);
+
+        if ((dist - round) < this._maxDistance) {
+            return true;
+        }
+
+        return false;
+    }
+
     _screenSpaceError(tile) {
-        var minDepth = this._minLOD;
-        var maxDepth = this._maxLOD;
+
 
         var quadcode = tile.getQuadCode();
 
@@ -178,33 +185,46 @@ export default class TileControler {
         //
         // It's used to multiple the dimensions of the tile sides before
         // comparing against the tile distance from camera
-        var quality = 3.0;
+        var quality = 1.2;
 
         // 1. Return false if quadcode length equals maxDepth (stop dividing)
-        if (quadcode.length === maxDepth) {
+        if (quadcode.length >= this._maxLOD) {
             return false;
         }
 
-        // 2. Return true if quadcode length is less than minDepth
-        if (quadcode.length < minDepth) {
-            return true;
-        }
+        // TODO: Can probably speed this up
+
+
 
         // 3. Return false if quadcode bounds are not in view frustum
         if (!this._tileInFrustum(tile)) {
             return false;
         }
 
-        var center = tile.getCenter();
+        if (!this._tileInDistance(tile)) {
+            return false;
+        }
+
+        if (quadcode.length <= this._minLOD) {
+            return true;
+        }
+
 
         // 4. Calculate screen-space error metric
         // TODO: Use closest distance to one of the 4 tile corners
+        var center = tile.getCenter();
         var dist = (new THREE.Vector3(center[0], 0, center[1])).sub(this._camera.position).length();
-
         var error = quality * tile.getSide() / dist;
 
-        // 5. Return true if error is greater than 1.0, else return false
-        return (error > 1.0);
+        if (error < 1) {
+            return false;
+        }
+
+        // // 2. Return true if quadcode length is less than minDepth
+
+
+        return true;
+
     }
 
 }

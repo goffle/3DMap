@@ -43,14 +43,19 @@ function init() {
 
 function runMapBox() {
 
-    //http://tile.mapzen.com/mapzen/vector/v1/{layers}/{z}/{x}/{y}.{format}?api_key=mapzen-WKzBDto
-    //http://tile.mapzen.com/mapzen/vector/v1/{layers}/{z}/{x}/{y}.{format}?api_key=mapzen-WKzBDto
+    const ImageOptions = {
+        maxDistance: 200000,
+        maxLOD: 16,
+        minLOD: 1
+    }
+    const r = new TileControler('http://{s}.basemaps.cartocdn.com/light_nolabels/{z}/{x}/{y}.png', 'image', camera, controls, scene, ImageOptions);
 
-
-    //https://tile.mapzen.com/mapzen/vector/v1/buildings/{z}/{x}/{y}.topojson?api_key=mapzen-WKzBDto
-
-    const r = new TileControler('http://{s}.basemaps.cartocdn.com/light_nolabels/{z}/{x}/{y}.png', 'image', camera, scene);
-    const s = new TileControler('https://tile.mapzen.com/mapzen/vector/v1/buildings/{z}/{x}/{y}.topojson?api_key=mapzen-WKzBDto', 'topo', camera, scene);
+    const topoOptions = {
+        maxDistance:  1000,
+        maxLOD: 16,
+        minLOD: 16
+    }
+    const s = new TileControler('https://tile.mapzen.com/mapzen/vector/v1/buildings/{z}/{x}/{y}.topojson?api_key=mapzen-JEvUQFv', 'topo', camera, controls, scene, topoOptions);
 }
 
 function animate() {
