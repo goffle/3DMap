@@ -4,16 +4,16 @@ import OrbitControls from "./camera/OrbitControls";
 import World from './world';
 import { latLon as LatLon } from './geo/LatLon';
 
-import TileControler from './tileControler';
+import TileControler from './tiles/controler';
 
 
-var camera, scene, renderer, controls, imageTile, topoTile;
+var camera, scene, renderer, controls, tiles = [];
 
-init();
+init(1.339560, 103.844943);
 runTiles();
 animate();
 
-function init() {
+function init(lat, lon) {
     camera = new THREE.PerspectiveCamera(70, window.innerWidth / window.innerHeight, 100, 10000000);
     camera.position.x = 20;
     camera.position.y = 580;
@@ -37,30 +37,51 @@ function init() {
     light.position.set(1, 1, 0).normalize();
     scene.add(light);
 
-    World.setView(LatLon([1.339560, 103.844943]));
+    World.setView(LatLon(lat, lon));
 
 }
 
 function runTiles() {
 
-    const ImageOptions = {
+    const imageTileOptions = {
         maxDistance: 200000,
         maxLOD: 16,
         minLOD: 1
     }
-    imageTile = new TileControler('http://{s}.basemaps.cartocdn.com/light_nolabels/{z}/{x}/{y}.png', 'image', camera, controls, scene, ImageOptions);
 
-    const topoOptions = {
+    const imageTile = new TileControler(
+        'http://{s}.basemaps.cartocdn.com/light_nolabels/{z}/{x}/{y}.png',
+        'image',
+        camera,
+        controls,
+        scene,
+        imageTileOptions);
+
+
+    const topoTileOptions = {
         maxDistance: 1000,
-        maxLOD: 16,
-        minLOD: 16
+        maxLOD: 15,
+        minLOD: 15
     }
-    topoTile = new TileControler('https://tile.mapzen.com/mapzen/vector/v1/buildings/{z}/{x}/{y}.topojson?api_key=mapzen-JEvUQFv', 'topo', camera, controls, scene, topoOptions);
+
+    const topoTile = new TileControler(
+        'https://tile.mapzen.com/mapzen/vector/v1/buildings/{z}/{x}/{y}.topojson?api_key=mapzen-JEvUQFv',
+        'topo',
+        camera,
+        controls,
+        scene,
+        topoTileOptions
+    )
+
+    tiles.push(topoTile);
+    tiles.push(imageTile);
+
 }
 
 function animate() {
     requestAnimationFrame(animate);
-    topoTile.update();
-    imageTile.update();
+    tiles.forEach((tile) => {
+        tile.update();
+    })
     renderer.render(scene, camera);
 }

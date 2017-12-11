@@ -1,10 +1,8 @@
-import { setInterval } from 'core-js/library/web/timers';
-
 import ImageTile from './tileImage';
 import TopoTile from './tileTopo';
 import ColorTile from './tileColor';
 
-import TileCache from './tileCache';
+import TileCache from './cache';
 
 export default class TileControler {
     constructor(url, type, camera, controls, scene, options = {}) {
@@ -24,13 +22,11 @@ export default class TileControler {
         this._tileCache = new TileCache(1000, tile => {
             //this._destroyTile(tile);
         });
-
         scene.add(this._tiles);
-
-
     }
 
-    update(){
+
+    update() {
         this._calculateLOD();
         this._outputTiles();
     }
@@ -51,7 +47,7 @@ export default class TileControler {
                 tile = new ImageTile(quadcode, this._url);
             } else if (this._type === 'topo') {
                 tile = new TopoTile(quadcode, this._url);
-            } else if (this._type === 'debug') {
+            } else if (this._type === 'color') {
                 tile = new ColorTile(quadcode);
             }
             // Add tile to cache, though it won't be ready yet as the data is being
@@ -63,22 +59,16 @@ export default class TileControler {
     }
 
     _outputTiles() {
-        //tile in
-        //tile in new
-        //tile in not 
 
         // Remove all tiles from layer
         if (!this._tiles || !this._tiles.children) {
             return;
         }
 
-
         var count = 0;
         for (var i = 0; i < this._tiles.children.length; i++) {
             count += this._tiles.children[i].children.length;
         }
-        // console.log('Meshs : ' + count);
-        // console.log('Tiles :' + this._tiles.children.length);
 
         for (var i = this._tiles.children.length - 1; i >= 0; i--) {
             this._tiles.remove(this._tiles.children[i]);
@@ -90,7 +80,6 @@ export default class TileControler {
             if (!tile.isReady()) {
                 return;
             }
-            // Add tile to layer (and to scene) if not already there
             this._tiles.add(tile.getMesh());
         });
     }
@@ -179,8 +168,6 @@ export default class TileControler {
     }
 
     _screenSpaceError(tile) {
-
-
         var quadcode = tile.getQuadCode();
 
         // Tweak this value to refine specific point that each quad is subdivided
@@ -194,23 +181,9 @@ export default class TileControler {
             return false;
         }
 
-        // TODO: Can probably speed this up
-
-
-
-        // 3. Return false if quadcode bounds are not in view frustum
-        if (!this._tileInFrustum(tile)) {
-            return false;
-        }
-
-        if (!this._tileInDistance(tile)) {
-            return false;
-        }
-
         if (quadcode.length <= this._minLOD) {
             return true;
         }
-
 
         // 4. Calculate screen-space error metric
         // TODO: Use closest distance to one of the 4 tile corners
@@ -221,9 +194,6 @@ export default class TileControler {
         if (error < 1) {
             return false;
         }
-
-        // // 2. Return true if quadcode length is less than minDepth
-
 
         return true;
 
