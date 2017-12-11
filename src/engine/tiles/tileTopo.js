@@ -7,6 +7,10 @@ import createPolygon from './../geometry/Polygon';
 
 import reqwest from 'reqwest';
 
+const lineMaterial = new THREE.LineBasicMaterial({ color: 0xEAEAEA, linewidth: 1 });
+const polygonMaterial = new THREE.MeshLambertMaterial({ color: 0xEBF3ED, emissive: 0xD4DADC, side: THREE.BackSide });
+
+
 export default class TileTopo extends TileAbstract {
   constructor(quadcode, path) {
     super(quadcode);
@@ -54,6 +58,7 @@ export default class TileTopo extends TileAbstract {
 
 
     const tmpGeometry = new THREE.Geometry();
+
     let tag = false;
 
     features.forEach(feature => {
@@ -77,9 +82,15 @@ export default class TileTopo extends TileAbstract {
     }
 
     tmpGeometry.computeBoundingBox();
-    var material = new THREE.MeshLambertMaterial({ color: 0xE8E5DE, emissive: 0x313131, side: THREE.BackSide });
-    var mesh2 = new THREE.Mesh(tmpGeometry, material);
-    return mesh2;
+    var buildingMesh = new THREE.Mesh(tmpGeometry, polygonMaterial);
+    buildingMesh.castShadow = true; //default is false
+    buildingMesh.receiveShadow = true; //default
+
+    var geo = new THREE.EdgesGeometry(tmpGeometry);
+    var wireframe = new THREE.LineSegments(geo, lineMaterial);
+    buildingMesh.add(wireframe);
+
+    return buildingMesh;
 
   }
 
@@ -97,3 +108,5 @@ export default class TileTopo extends TileAbstract {
     });
   }
 }
+
+

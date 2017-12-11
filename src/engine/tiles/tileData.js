@@ -1,12 +1,33 @@
 import TileAbstract from './tileAbstract';
+var foursquare = (require('foursquarevenues'))('HL5RWIE230MJVF1ZHXZ12WCQBR2YBBD1ZJMD2U1MRW3NFCCI', 'XHRP5GG20KRXYOAHHMHZIWPHNLRXOFEMIJBI5JZYKWKLK5CJ');
+
+
 
 export default class TileImage extends TileAbstract {
   constructor(quadcode, path) {
     super(quadcode);
     this._path = path;
+
+
   }
 
   _requestTile() {
+    /*	var params = {
+		"ll": "40.7,-74"
+	};
+
+	foursquare.getVenues(params, function(error, venues) {
+		if (!error) {
+			console.log(venues);
+		}
+	});
+
+	foursquare.exploreVenues(params, function(error, venues) {
+		if (!error) {
+  			console.log(venues);
+		}
+  });
+  */
     return new Promise((resolve, reject) => {
 
       var urlParams = {
@@ -62,11 +83,10 @@ export default class TileImage extends TileAbstract {
     var localMesh = new THREE.Mesh(geom, material);
     localMesh.rotation.x = -90 * Math.PI / 180;
 
-    localMesh.receiveShadow = true;
-
     localMesh.position.x = this._center[0];
     localMesh.position.z = this._center[1];
     localMesh.renderOrder = 0.1;
+    localMesh.receiveShadow = true;
 
     return localMesh;
   }

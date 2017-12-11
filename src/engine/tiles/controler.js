@@ -32,13 +32,8 @@ export default class TileControler {
     }
 
     _updateFrustum() {
-        var projScreenMatrix = new THREE.Matrix4();
-        projScreenMatrix.multiplyMatrices(this._camera.projectionMatrix, this._camera.matrixWorldInverse);
-        this._frustum.setFromMatrix(this._camera.projectionMatrix);
         this._frustum.setFromMatrix(new THREE.Matrix4().multiplyMatrices(this._camera.projectionMatrix, this._camera.matrixWorldInverse));
     }
-
-
 
     _getTile(quadcode) {
         var tile = this._tileCache.getTile(quadcode);

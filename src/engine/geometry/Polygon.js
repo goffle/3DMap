@@ -14,7 +14,6 @@
 // TODO: Allow _setBufferAttributes to use a custom function passed in to
 // generate a custom mesh
 
-import extend from 'lodash.assign';
 import { latLon as LatLon } from '../geo/LatLon';
 import { point as Point } from '../geo/Point';
 import earcut from 'earcut';
@@ -43,7 +42,6 @@ function getBufferAttributes(projectedCoordinates, height) {
   // Light and dark colours used for poor-mans AO gradient on object sides
   var light = new THREE.Color(0xffffff);
   var shadow = new THREE.Color(0x666666);
-
 
   // For each polygon
   attributes = projectedCoordinates.map(projectedCoordinate => {
@@ -284,10 +282,8 @@ function toEarcut(coordinates) {
 
   for (var i = 0; i < coordinates.length; i++) {
     for (var j = 0; j < coordinates[i].length; j++) {
-      // for (var d = 0; d < dim; d++) {
       result.vertices.push(coordinates[i][j].x);
       result.vertices.push(coordinates[i][j].y);
-      // }
     }
     if (i > 0) {
       holeIndex += coordinates[i - 1].length;
