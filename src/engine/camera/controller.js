@@ -21,7 +21,7 @@ class CameraController {
     }
 
     flyToPoint(point, zoom = 200) {
-        const animationDuration = 600;
+        const animationDuration = 1000;
         let from = {
             positionx: this.camera.position.x,
             positiony: this.camera.position.y,

@@ -1,5 +1,5 @@
-import { latLon as LatLon } from './geo/LatLon';
-import world from './world';
+import { latLon as LatLon } from './../geo/LatLon';
+import world from './../world';
 
 
 function quadcodeToVec3(quadcode) {

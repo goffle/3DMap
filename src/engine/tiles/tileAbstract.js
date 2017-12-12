@@ -4,7 +4,7 @@ import { point as Point } from './../geo/Point';
 import { latLon as LatLon } from './../geo/LatLon';
 
 import world from './../world';
-import helper from './../helper';
+import helper from './../util/helper';
 
 export default class TileAbstract {
 
