@@ -1,6 +1,7 @@
 import ImageTile from './tileImage';
 import TopoTile from './tileTopo';
 import ColorTile from './tileColor';
+import DataTile from './tileData';
 
 import TileCache from './cache';
 
@@ -44,6 +45,8 @@ export default class TileControler {
                 tile = new TopoTile(quadcode, this._url);
             } else if (this._type === 'color') {
                 tile = new ColorTile(quadcode);
+            } else if (this._type === 'data') {
+                tile = new DataTile(quadcode);
             }
             // Add tile to cache, though it won't be ready yet as the data is being
             // requested from various places asynchronously

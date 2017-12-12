@@ -25,10 +25,10 @@
   },
   "dependencies": {
     "earcut": "^2.1.2",
-    "fs": "0.0.1-security",
     "geojson-merge": "^0.1.0",
     "lodash.assign": "^4.2.0",
     "lru-cache": "^4.1.1",
+    "request": "^2.83.0",
     "reqwest": "^2.0.5",
     "three": "^0.88.0",
     "topojson": "^3.0.2",

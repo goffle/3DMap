@@ -1,21 +1,36 @@
 //var THREE = require('three');
 
-import OrbitControls from "./camera/OrbitControls";
+import CameraController from "./camera/controller";
 import World from './world';
 import { latLon as LatLon } from './geo/LatLon';
 
 import TileControler from './tiles/controler';
 
 
-var camera, scene, renderer, controls, tiles = [];
+var camera, scene, renderer, tiles = [];
+
+var dataGroup = new THREE.Group();
+var objects = [];
+
 
 init(1.339560, 103.844943);
 runTiles();
 //generateShadows();
 animate();
 
+setTimeout(() => {
+    addObject(1.339775, 103.846778);
+    addObject(1.339689, 103.842840);
+    addObject(1.339549, 103.846134);
+
+}, 1000);
+
 function init(lat, lon) {
+
+
+
     camera = new THREE.PerspectiveCamera(70, window.innerWidth / window.innerHeight, 100, 10000000);
+
     camera.position.x = 200;
     camera.position.y = 365;
     camera.position.z = 200;
@@ -30,7 +45,6 @@ function init(lat, lon) {
     renderer.setClearColor(0xE0EAF1, 1); // the default
     document.getElementById('world').appendChild(renderer.domElement);
 
-    controls = new THREE.OrbitControls(camera, renderer.domElement);
 
     var light1 = new THREE.DirectionalLight(0x131313, 0.7);
     light1.position.set(100, 100, 100);
@@ -43,10 +57,34 @@ function init(lat, lon) {
 
     scene.add(new THREE.AmbientLight(0x131313));
 
+    CameraController.init(camera, renderer);
 
     World.setView(LatLon(lat, lon));
 
+    document.addEventListener('mousedown', onDocumentMouseDown, false);
 
+    scene.add(dataGroup);
+}
+
+
+
+function onDocumentMouseDown(event) {
+    event.preventDefault();
+
+    const raycaster = new THREE.Raycaster();
+    const mouse = new THREE.Vector2();
+
+    mouse.x = (event.clientX / renderer.domElement.clientWidth) * 2 - 1;
+    mouse.y = - (event.clientY / renderer.domElement.clientHeight) * 2 + 1;
+
+    raycaster.setFromCamera(mouse, camera);
+    var intersects = raycaster.intersectObjects(objects);
+
+    if (intersects.length > 0) {
+        intersects[0].object.material.color.setHex(Math.random() * 0xffffff);
+        CameraController.flyToPoint(intersects[0].point);
+
+    }
 }
 
 function generateShadows() {
@@ -81,6 +119,8 @@ function generateShadows() {
 
 function runTiles() {
 
+    const controls = CameraController.getControls();
+
     const imageTileOptions = {
         maxDistance: 200000,
         maxLOD: 18,
@@ -111,6 +151,24 @@ function runTiles() {
         topoTileOptions
     )
 
+
+    const dataTileOptions = {
+        maxDistance: 1000,
+        maxLOD: 13,
+        minLOD: 13
+    }
+
+    const dataTile = new TileControler(
+        'https://tile.mapzen.com/mapzen/vector/v1/buildings/{z}/{x}/{y}.topojson?api_key=mapzen-JEvUQFv',
+        'data',
+        camera,
+        controls,
+        scene,
+        dataTileOptions
+    )
+
+
+
     const colorTile = new TileControler(
         '',
         'color',
@@ -118,11 +176,25 @@ function runTiles() {
         controls,
         scene
     )
-
+    //tiles.push(dataTile);
     //tiles.push(colorTile);
     tiles.push(topoTile);
     tiles.push(imageTile);
 
+}
+
+function addObject(lat, lon) {
+
+    var material = new THREE.MeshBasicMaterial({ color: 0xff0000 });
+    var geometry = new THREE.BoxGeometry(10, 50, 10);
+    var cube = new THREE.Mesh(geometry, material);
+    const pt = World.latLonToPoint(LatLon(lat, lon));
+    cube.position.x = pt.x;
+    cube.position.y = 20;
+    cube.position.z = pt.y;
+
+    objects.push(cube);
+    dataGroup.add(cube);
 }
 
 function animate() {
@@ -130,5 +202,6 @@ function animate() {
     tiles.forEach((tile) => {
         tile.update();
     })
+    TWEEN.update();
     renderer.render(scene, camera);
 }

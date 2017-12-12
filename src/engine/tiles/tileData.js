@@ -1,7 +1,9 @@
 import TileAbstract from './tileAbstract';
-var foursquare = (require('foursquarevenues'))('HL5RWIE230MJVF1ZHXZ12WCQBR2YBBD1ZJMD2U1MRW3NFCCI', 'XHRP5GG20KRXYOAHHMHZIWPHNLRXOFEMIJBI5JZYKWKLK5CJ');
+import world from './../world';
+import { latLon as LatLon } from './../geo/LatLon';
+const reqwest = require('reqwest');
 
-
+var material = new THREE.MeshBasicMaterial({ color: 0xff0000 });
 
 export default class TileImage extends TileAbstract {
   constructor(quadcode, path) {
@@ -9,99 +11,55 @@ export default class TileImage extends TileAbstract {
     this._path = path;
 
 
+
   }
+
 
   _requestTile() {
-    /*	var params = {
-		"ll": "40.7,-74"
-	};
+    return this.search(this._centerLatlon.lat, this._centerLatlon.lon);
+  }
 
-	foursquare.getVenues(params, function(error, venues) {
-		if (!error) {
-			console.log(venues);
-		}
-	});
+  createMarker(lat, lon) {
+    var geometry = new THREE.BoxGeometry(10, 100, 10);
+    var cube = new THREE.Mesh(geometry, material);
+    const pt = world.latLonToPoint(LatLon(lat, lon));
+    cube.position.x = pt.x;
+    cube.position.z = pt.y;
+    cube.position.y = 0;
+    return cube;
+  }
 
-	foursquare.exploreVenues(params, function(error, venues) {
-		if (!error) {
-  			console.log(venues);
-		}
-  });
-  */
+  search(lat, lon) {
+
     return new Promise((resolve, reject) => {
+      const clientId = 'HL5RWIE230MJVF1ZHXZ12WCQBR2YBBD1ZJMD2U1MRW3NFCCI';
+      const clientSecret = 'XHRP5GG20KRXYOAHHMHZIWPHNLRXOFEMIJBI5JZYKWKLK5CJ';
+      const url = `https://api.foursquare.com/v2/venues/search?v=20161016&ll=${lat},${lon}&query=coffee&intent=checkin&client_id=${clientId}&client_secret=${clientSecret}`;
 
-      var urlParams = {
-        x: this._tile[0],
-        y: this._tile[1],
-        z: this._tile[2]
-      };
+      fetch(url)
+        .then((v) => {
+          v.json().then((vv) => {
+            const arr = (vv.response && vv.response.venues) ? vv.response.venues : []
+            if (arr.length) {
+              const groupMesh = new THREE.Group();
+              arr.forEach((element) => {
+                groupMesh.add(this.createMarker(element.location.lat, element.location.lng));
+              });
 
-      var url = this.getTileURL(urlParams, this._path);
-
-      const planeMesh = this.createMesh();
-      var image = document.createElement('img');
-      image.addEventListener('load', event => {
-        var texture = new THREE.Texture();
-
-        texture.image = image;
-        texture.needsUpdate = true;
-
-        // Silky smooth images when tilted
-        texture.magFilter = THREE.LinearFilter;
-        texture.minFilter = THREE.LinearMipMapLinearFilter;
-
-        // TODO: Set this to renderer.getMaxAnisotropy() / 4
-        texture.anisotropy = 4;
-        texture.needsUpdate = true;
-
-        // //
-        // // Possibly removed by the cache before the image loaded
-        // if (!this._mesh || !this._mesh.children[0] || !this._mesh.children[0].material) {
-        //   return;
-        // }
-
-        planeMesh.material.map = texture;
-        planeMesh.material.needsUpdate = true;
-
-
-        resolve(planeMesh)
-      }, false);
-
-      image.crossOrigin = '';
-      image.src = url;    // Load image
-    });
-
-  }
-
-  createMesh() {
-    var geom = new THREE.PlaneBufferGeometry(this._side, this._side, 1);
-
-    var material = new THREE.MeshBasicMaterial({
-      depthWrite: false
-    });
-
-    var localMesh = new THREE.Mesh(geom, material);
-    localMesh.rotation.x = -90 * Math.PI / 180;
-
-    localMesh.position.x = this._center[0];
-    localMesh.position.z = this._center[1];
-    localMesh.renderOrder = 0.1;
-    localMesh.receiveShadow = true;
-
-    return localMesh;
-  }
-
-
-  getTileURL(urlParams, url) {
-    if (!urlParams.s) {
-      // Default to a random choice of a, b or c
-      urlParams.s = String.fromCharCode(97 + Math.floor(Math.random() * 3));
-    }
-    var tileURLRegex = /\{([szxy])\}/g;
-    tileURLRegex.lastIndex = 0;
-    return url.replace(tileURLRegex, (value, key) => {
-      // Replace with paramter, otherwise keep existing value
-      return urlParams[key];
+              resolve(groupMesh);
+            } else {
+              reject();
+            }
+          })
+            .catch((e) => {
+              reject();
+              console.log(e)
+            });
+        })
+        .catch((e) => {
+          reject();
+          console.log(e)
+        });
     });
   }
 
