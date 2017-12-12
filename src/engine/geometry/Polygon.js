@@ -252,8 +252,6 @@ function isSingle(coordinates) {
   return !Array.isArray(coordinates[0][0][0]);
 }
 
-
-
 function projectandconverteCoordinates(coordinates) {
   return coordinates.map(coordinates2 => {
     return coordinates2.map(ring => {

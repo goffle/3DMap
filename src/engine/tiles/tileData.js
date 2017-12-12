@@ -9,11 +9,7 @@ export default class TileImage extends TileAbstract {
   constructor(quadcode, path) {
     super(quadcode);
     this._path = path;
-
-
-
   }
-
 
   _requestTile() {
     return this.search(this._centerLatlon.lat, this._centerLatlon.lon);
@@ -22,10 +18,10 @@ export default class TileImage extends TileAbstract {
   createMarker(lat, lon) {
     var geometry = new THREE.BoxGeometry(10, 100, 10);
     var cube = new THREE.Mesh(geometry, material);
-    const pt = world.latLonToPoint(LatLon(lat, lon));
-    cube.position.x = pt.x;
-    cube.position.z = pt.y;
-    cube.position.y = 0;
+    // const pt = world.pointToLatLon(LatLon(lat, lon));
+    // cube.position.x = pt.x;
+    // cube.position.z = pt.y;
+    // cube.position.y = 0;
     return cube;
   }
 

@@ -1,7 +1,6 @@
 import { latLon as LatLon } from './../geo/LatLon';
 import world from './../world';
 
-
 function quadcodeToVec3(quadcode) {
     var x = 0;
     var y = 0;
@@ -28,7 +27,6 @@ function tileBoundsFromWGS84(boundsWGS84) {
     var ne = world.latLonToPoint(LatLon(boundsWGS84[3], boundsWGS84[2]));
     return [sw.x, sw.y, ne.x, ne.y];
 }
-
 
 function tileBoundsWGS84(tile) {
     var e = tile2lon(tile[0] + 1, tile[2]);
