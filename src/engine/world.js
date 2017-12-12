@@ -50,7 +50,6 @@ class World {
 
   pointScale(latlon, accurate) {
     var rad = Math.PI / 180;
-
     var k;
 
     if (!accurate) {
