@@ -1,5 +1,4 @@
 
-import Geo from './geo/geo';
 import { point as Point } from './geo/Point';
 import { latLon as LatLon } from './geo/LatLon';
 
