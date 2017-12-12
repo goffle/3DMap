@@ -6,7 +6,7 @@ import { latLon as LatLon } from './geo/LatLon';
 import Tiles from './tiles';
 
 
-var camera, scene, renderer, tiles, element;
+var camera, scene, renderer, tiles, element, mouse = new THREE.Vector2();
 
 
 var dataGroup = new THREE.Group();
@@ -41,7 +41,6 @@ function init(lat, lon) {
 
     element = document.getElementById('world');
     element.appendChild(renderer.domElement);
-
     renderer.setSize(element.clientWidth, element.clientHeight);
     renderer.setClearColor(0xE0EAF1, 1); // the default
 
@@ -66,7 +65,8 @@ function init(lat, lon) {
 
     document.addEventListener('mousedown', onDocumentMouseDown, false);
     document.addEventListener('touchstart', onDocumentTouchStart, false);
-    window.addEventListener('resize', onWindowResize, false);
+    document.addEventListener('resize', onElementResize, false);
+    document.addEventListener('mousemove', onDocumentMouseMove, false);
 
 
     tiles = new Tiles(scene);
@@ -75,10 +75,13 @@ function init(lat, lon) {
 
 }
 
-function onWindowResize() {
-    camera.aspect = window.innerWidth / window.innerHeight;
+function onElementResize() {
+
+
+
+    camera.aspect = element.clientWidth / element.clientHeight;
     camera.updateProjectionMatrix();
-  //  renderer.setSize(window.innerWidth, window.innerHeight);
+    renderer.setSize(element.clientWidth, element.clientHeight);
 }
 
 function onDocumentTouchStart(event) {
@@ -90,22 +93,33 @@ function onDocumentTouchStart(event) {
 }
 
 
+function onDocumentMouseMove(event) {
+    // update the mouse variable
+    mouse.x = (event.clientX / element.clientWidth) * 2 - 1;
+    mouse.y = - (event.clientY / element.clientHeight) * 2 + 1;
+    const obj = getObject(mouse);
+    if (obj) {
+        obj.object.material.color.setHex(Math.random() * 0xffffff);
+    }
+}
+
+
 function onDocumentMouseDown(event) {
     event.preventDefault();
+    const obj = getObject(mouse);
+    if (obj) {
+        CameraController.flyToPoint(obj.point);
+    }
+}
 
+function getObject(pos) {
     const raycaster = new THREE.Raycaster();
-    const mouse = new THREE.Vector2();
 
-    mouse.x = (event.clientX / renderer.domElement.clientWidth) * 2 - 1;
-    mouse.y = - (event.clientY / renderer.domElement.clientHeight) * 2 + 1;
-
-    raycaster.setFromCamera(mouse, camera);
+    raycaster.setFromCamera(pos, camera);
     var intersects = raycaster.intersectObjects(objects);
 
-    if (intersects.length > 0) {
-        intersects[0].object.material.color.setHex(Math.random() * 0xffffff);
-        CameraController.flyToPoint(intersects[0].point);
-    }
+    return (intersects.length > 0) ? intersects[0] : null;
+
 }
 
 function generateShadows() {
