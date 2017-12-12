@@ -40,9 +40,6 @@ class CameraController {
             targetz: point.z
         };
 
-        //console.log(from, to);
-
-
         new TWEEN.Tween(from).to(to, animationDuration)
             .easing(TWEEN.Easing.Quadratic.InOut)
             .onUpdate(() => {
@@ -60,11 +57,23 @@ class CameraController {
             .start();
     }
 
-    // Center on an Object
-    centerOn(selectedObject, zoom = 200) {
-
-    }
 }
+
+
+
+/*
+			function render() {
+
+				theta += 0.1;
+
+				camera.position.x = radius * Math.sin( THREE.Math.degToRad( theta ) );
+				camera.position.y = radius * Math.sin( THREE.Math.degToRad( theta ) );
+				camera.position.z = radius * Math.cos( THREE.Math.degToRad( theta ) );
+				camera.lookAt( scene.position );
+
+				renderer.render( scene, camera );
+
+			}*/
 
 const c = new CameraController();
 export default c;

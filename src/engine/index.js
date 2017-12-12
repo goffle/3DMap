@@ -6,7 +6,8 @@ import { latLon as LatLon } from './geo/LatLon';
 import Tiles from './tiles';
 
 
-var camera, scene, renderer, tiles;
+var camera, scene, renderer, tiles, element;
+
 
 var dataGroup = new THREE.Group();
 var objects = [];
@@ -26,8 +27,6 @@ setTimeout(() => {
 
 function init(lat, lon) {
 
-
-
     camera = new THREE.PerspectiveCamera(70, window.innerWidth / window.innerHeight, 100, 10000000);
 
     camera.position.x = 200;
@@ -40,9 +39,12 @@ function init(lat, lon) {
     renderer = new THREE.WebGLRenderer({ antialias: true });
 
 
-    renderer.setSize(window.innerWidth, window.innerHeight);
+    element = document.getElementById('world');
+    element.appendChild(renderer.domElement);
+
+    renderer.setSize(element.clientWidth, element.clientHeight);
     renderer.setClearColor(0xE0EAF1, 1); // the default
-    document.getElementById('world').appendChild(renderer.domElement);
+
 
 
     var light1 = new THREE.DirectionalLight(0x131313, 0.7);
@@ -60,15 +62,33 @@ function init(lat, lon) {
 
     World.setView(LatLon(lat, lon));
 
-    document.addEventListener('mousedown', onDocumentMouseDown, false);
-
     scene.add(dataGroup);
 
-    tiles = new Tiles(scene);
+    document.addEventListener('mousedown', onDocumentMouseDown, false);
+    document.addEventListener('touchstart', onDocumentTouchStart, false);
+    window.addEventListener('resize', onWindowResize, false);
 
+
+    tiles = new Tiles(scene);
     tiles.setImage('http://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}.png');
-    tiles.setTopo('https://tile.mapzen.com/mapzen/vector/v1/buildings/{z}/{x}/{y}.topojson?api_key=mapzen-JEvUQFv')
+    tiles.setTopo('https://tile.mapzen.com/mapzen/vector/v1/buildings/{z}/{x}/{y}.topojson?api_key=mapzen-JEvUQFv');
+
 }
+
+function onWindowResize() {
+    camera.aspect = window.innerWidth / window.innerHeight;
+    camera.updateProjectionMatrix();
+  //  renderer.setSize(window.innerWidth, window.innerHeight);
+}
+
+function onDocumentTouchStart(event) {
+    event.preventDefault();
+
+    event.clientX = event.touches[0].clientX;
+    event.clientY = event.touches[0].clientY;
+    onDocumentMouseDown(event);
+}
+
 
 function onDocumentMouseDown(event) {
     event.preventDefault();
@@ -137,3 +157,4 @@ function animate() {
     TWEEN.update();
     renderer.render(scene, camera);
 }
+
