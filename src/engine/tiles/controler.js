@@ -1,3 +1,5 @@
+import CameraController from "./../camera/controller";
+
 import ImageTile from './tileImage';
 import TopoTile from './tileTopo';
 import ColorTile from './tileColor';
@@ -6,10 +8,8 @@ import DataTile from './tileData';
 import TileCache from './cache';
 
 export default class TileControler {
-    constructor(url, type, camera, controls, scene, options = {}) {
+    constructor(url, type, scene, options = {}) {
 
-        this._camera = camera;
-        this._controls = controls;
         this._type = type;
         this._url = url;
         this._tiles = new THREE.Group();
@@ -33,7 +33,7 @@ export default class TileControler {
     }
 
     _updateFrustum() {
-        this._frustum.setFromMatrix(new THREE.Matrix4().multiplyMatrices(this._camera.projectionMatrix, this._camera.matrixWorldInverse));
+        this._frustum.setFromMatrix(new THREE.Matrix4().multiplyMatrices(CameraController.camera.projectionMatrix, CameraController.camera.matrixWorldInverse));
     }
 
     _getTile(quadcode) {
@@ -153,7 +153,7 @@ export default class TileControler {
     }
 
     _tileInDistance(tile) {
-        const cameraVec2 = new THREE.Vector2(this._controls.target.x, this._controls.target.z);
+        const cameraVec2 = new THREE.Vector2(CameraController.controls.target.x, CameraController.controls.target.z);
         const center = new THREE.Vector2(tile.getCenter()[0], tile.getCenter()[1]);
         const round = (tile.getSide() / Math.sqrt(2));
         const dist = cameraVec2.distanceTo(center);
@@ -186,7 +186,7 @@ export default class TileControler {
         // 4. Calculate screen-space error metric
         // TODO: Use closest distance to one of the 4 tile corners
         var center = tile.getCenter();
-        var dist = (new THREE.Vector3(center[0], 0, center[1])).sub(this._camera.position).length();
+        var dist = (new THREE.Vector3(center[0], 0, center[1])).sub(CameraController.camera.position).length();
         var error = quality * tile.getSide() / dist;
 
         if (error < 1) {

@@ -4,20 +4,17 @@ import OrbitControls from "./orbitControls"
 
 class CameraController {
     constructor() {
-        this._camera = null;
-        this._controls = null;
+        this.camera = null;
+        this.controls = null;
     }
 
     init(camera, renderer) {
-        this._camera = camera;
-        this._camera.position.set(0, 300, 0);
-        this._camera.lookAt(new THREE.Vector3(0, 0, 0));
-        this._camera.updateProjectionMatrix();
-        this._controls = new THREE.OrbitControls(this._camera, renderer.domElement);
+        this.camera = camera;
+        this.camera.position.set(0, 300, 0);
+        this.camera.lookAt(new THREE.Vector3(0, 0, 0));
+        this.camera.updateProjectionMatrix();
+        this.controls = new THREE.OrbitControls(this.camera, renderer.domElement);
     }
-
-    getControls() { return this._controls; }
-
 
     flyToLatLon(LatLon, zoom = 200) {
 
@@ -26,12 +23,12 @@ class CameraController {
     flyToPoint(point, zoom = 200) {
         const animationDuration = 600;
         let from = {
-            positionx: this._camera.position.x,
-            positiony: this._camera.position.y,
-            positionz: this._camera.position.z,
-            targetx: this._controls.target.x,
-            targety: this._controls.target.y,
-            targetz: this._controls.target.z
+            positionx: this.camera.position.x,
+            positiony: this.camera.position.y,
+            positionz: this.camera.position.z,
+            targetx: this.controls.target.x,
+            targety: this.controls.target.y,
+            targetz: this.controls.target.z
         };
 
         let to = {
@@ -49,16 +46,16 @@ class CameraController {
         new TWEEN.Tween(from).to(to, animationDuration)
             .easing(TWEEN.Easing.Quadratic.InOut)
             .onUpdate(() => {
-                this._camera.lookAt(from.targetx, from.targety, from.targetz);
-                this._camera.position.set(from.positionx, from.positiony, from.positionz);
-                this._controls.target.set(from.targetx, from.targety, from.targetz);
+                this.camera.lookAt(from.targetx, from.targety, from.targetz);
+                this.camera.position.set(from.positionx, from.positiony, from.positionz);
+                this.controls.target.set(from.targetx, from.targety, from.targetz);
 
-                this._camera.updateProjectionMatrix();
-                this._controls.update();
+                this.camera.updateProjectionMatrix();
+                this.controls.update();
             })
             .onComplete(() => {
-                // this._camera.lookAt(to.positionx,to.positiony,to.positionz);
-                // this._controls.center.set(to.targetx,to.targety,to.targetz);
+                // this.camera.lookAt(to.positionx,to.positiony,to.positionz);
+                // this.controls.center.set(to.targetx,to.targety,to.targetz);
             })
             .start();
     }

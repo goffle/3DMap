@@ -3,18 +3,16 @@
 import CameraController from "./camera/controller";
 import World from './world';
 import { latLon as LatLon } from './geo/LatLon';
+import Tiles from './tiles';
 
-import TileControler from './tiles/controler';
 
-
-var camera, scene, renderer, tiles = [];
+var camera, scene, renderer, tiles;
 
 var dataGroup = new THREE.Group();
 var objects = [];
 
 
 init(1.339560, 103.844943);
-runTiles();
 //generateShadows();
 animate();
 
@@ -64,9 +62,12 @@ function init(lat, lon) {
     document.addEventListener('mousedown', onDocumentMouseDown, false);
 
     scene.add(dataGroup);
+
+    tiles = new Tiles(scene);
+
+    tiles.setImage('http://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}.png');
+    tiles.setTopo('https://tile.mapzen.com/mapzen/vector/v1/buildings/{z}/{x}/{y}.topojson?api_key=mapzen-JEvUQFv')
 }
-
-
 
 function onDocumentMouseDown(event) {
     event.preventDefault();
@@ -83,7 +84,6 @@ function onDocumentMouseDown(event) {
     if (intersects.length > 0) {
         intersects[0].object.material.color.setHex(Math.random() * 0xffffff);
         CameraController.flyToPoint(intersects[0].point);
-
     }
 }
 
@@ -113,75 +113,8 @@ function generateShadows() {
     light.shadowCameraTop = size;
     light.shadowCameraBottom = -size;
     scene.add(light);
-
 }
 
-
-function runTiles() {
-
-    const controls = CameraController.getControls();
-
-    const imageTileOptions = {
-        maxDistance: 200000,
-        maxLOD: 18,
-        minLOD: 1
-    }
-
-    const imageTile = new TileControler(
-        'http://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}.png',
-        'image',
-        camera,
-        controls,
-        scene,
-        imageTileOptions);
-
-
-    const topoTileOptions = {
-        maxDistance: 1000,
-        maxLOD: 15,
-        minLOD: 15
-    }
-
-    const topoTile = new TileControler(
-        'https://tile.mapzen.com/mapzen/vector/v1/buildings/{z}/{x}/{y}.topojson?api_key=mapzen-JEvUQFv',
-        'topo',
-        camera,
-        controls,
-        scene,
-        topoTileOptions
-    )
-
-
-    const dataTileOptions = {
-        maxDistance: 1000,
-        maxLOD: 13,
-        minLOD: 13
-    }
-
-    const dataTile = new TileControler(
-        'https://tile.mapzen.com/mapzen/vector/v1/buildings/{z}/{x}/{y}.topojson?api_key=mapzen-JEvUQFv',
-        'data',
-        camera,
-        controls,
-        scene,
-        dataTileOptions
-    )
-
-
-
-    const colorTile = new TileControler(
-        '',
-        'color',
-        camera,
-        controls,
-        scene
-    )
-    //tiles.push(dataTile);
-    //tiles.push(colorTile);
-    tiles.push(topoTile);
-    tiles.push(imageTile);
-
-}
 
 function addObject(lat, lon) {
 
@@ -199,9 +132,7 @@ function addObject(lat, lon) {
 
 function animate() {
     requestAnimationFrame(animate);
-    tiles.forEach((tile) => {
-        tile.update();
-    })
+    tiles.update();
     TWEEN.update();
     renderer.render(scene, camera);
 }
