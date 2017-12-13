@@ -14,20 +14,26 @@ export default class Tiles {
         })
     }
 
-    setImage(url) {
+    createImageTiles(url) {
         const imageTileOptions = { maxDistance: 200000, maxLOD: 18, minLOD: 1 }
         const imageTile = new TileControler(
             url,
             'image',
-            this._scene,
             imageTileOptions);
 
         this._tiles.push(imageTile);
+
+
+        const mesh = imageTile.getTilesGroup();
+        this._scene.add(mesh);
+
+        return mesh;
     }
 
-    setTopo(url) {
+    createTopoTiles(url) {
         const topoTileOptions = {
             maxDistance: 1000,
+            maxHeight: 800,
             maxLOD: 15,
             minLOD: 15
         }
@@ -35,19 +41,27 @@ export default class Tiles {
         const topoTile = new TileControler(
             url,
             'topo',
-            this._scene,
             topoTileOptions
         );
         this._tiles.push(topoTile);
+
+        const mesh = topoTile.getTilesGroup();
+        this._scene.add(mesh);
+
+        return mesh;
     }
 
-    setDebug() {
+    createDebugTiles() {
         const colorTile = new TileControler(
             '',
-            'color',
-            this._scene
+            'color'
         )
         this._tiles.push(colorTile);
+
+        const mesh = colorTile.getTilesGroup();
+        this._scene.add(mesh);
+        return mesh;
+
     }
 }
 

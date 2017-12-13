@@ -44,18 +44,41 @@ export default class TileTopo extends TileAbstract {
     });
   }
 
-  getMeshFromTopo(data) {
 
-    if (!data) {
+  getUnMergedMesh(features) {
+
+    const g = new THREE.Group();
+    let tag = false;
+
+    features.forEach(feature => {
+      const { type, coordinates } = feature.geometry;
+      var height = feature.properties.height;
+
+      if (!coordinates) {
+        return;
+      }
+
+      if (type === 'Polygon' || type === 'MultiPolygon') {
+        var geometry = createPolygon(coordinates, height);
+
+        var buildingMesh = new THREE.Mesh(geometry, polygonMaterial);
+        var geo = new THREE.EdgesGeometry(geometry);
+        var wireframe = new THREE.LineSegments(geo, lineMaterial);
+        buildingMesh.add(wireframe);
+        g.add(buildingMesh);
+        tag = true;
+      }
+    });
+
+    if (!tag) {
       return null;
     }
-    var collections = [];
-    for (var tk in data.objects) {
-      collections.push(feature(data, data.objects[tk]));
-    }
 
-    const { features } = geojsonMerge(collections);
+    return g;
+  }
 
+
+  getMergedMesh(features) {
 
     const tmpGeometry = new THREE.Geometry();
 
@@ -71,6 +94,7 @@ export default class TileTopo extends TileAbstract {
 
       if (type === 'Polygon' || type === 'MultiPolygon') {
         var geometry = createPolygon(coordinates, height);
+
         var pxTmpGeometry = new THREE.Geometry().fromBufferGeometry(geometry);
         tmpGeometry.merge(pxTmpGeometry);
         tag = true;
@@ -83,14 +107,30 @@ export default class TileTopo extends TileAbstract {
 
     tmpGeometry.computeBoundingBox();
     var buildingMesh = new THREE.Mesh(tmpGeometry, polygonMaterial);
-    buildingMesh.castShadow = true; //default is false
-    buildingMesh.receiveShadow = true; //default
+    // buildingMesh.castShadow = true; //default is false
+    // buildingMesh.receiveShadow = true; //default
 
     var geo = new THREE.EdgesGeometry(tmpGeometry);
     var wireframe = new THREE.LineSegments(geo, lineMaterial);
     buildingMesh.add(wireframe);
 
     return buildingMesh;
+
+  }
+
+  getMeshFromTopo(data) {
+
+    if (!data) {
+      return null;
+    }
+    var collections = [];
+    for (var tk in data.objects) {
+      collections.push(feature(data, data.objects[tk]));
+    }
+
+    const { features } = geojsonMerge(collections);
+
+    return this.getUnMergedMesh(features);
 
   }
 

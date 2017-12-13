@@ -16,11 +16,16 @@ class CameraController {
         this.controls = new THREE.OrbitControls(this.camera, renderer.domElement);
     }
 
-    flyToLatLon(LatLon, zoom = 200) {
+    flyToLatLon(LatLon, degree = 45, zoom = 200) {
 
     }
 
-    flyToPoint(point, zoom = 200) {
+    flyToPoint(point, degree = 45, dist = 500) {
+
+        const a = dist * Math.sin(degree * Math.PI / 180);
+        const o = dist * Math.cos(degree * Math.PI / 180);
+
+
         const animationDuration = 1000;
         let from = {
             positionx: this.camera.position.x,
@@ -33,8 +38,8 @@ class CameraController {
 
         let to = {
             positionx: point.x,
-            positiony: point.y + 100,
-            positionz: point.z + zoom,
+            positiony: point.y + a,
+            positionz: point.z + o,
             targetx: point.x,
             targety: point.y,
             targetz: point.z
@@ -51,8 +56,9 @@ class CameraController {
                 this.controls.update();
             })
             .onComplete(() => {
-                // this.camera.lookAt(to.positionx,to.positiony,to.positionz);
-                // this.controls.center.set(to.targetx,to.targety,to.targetz);
+                this.camera.lookAt(to.targetx, to.targety, to.targetz);
+                this.camera.position.set(to.positionx, to.positiony, to.positionz);
+                this.controls.target.set(to.targetx, to.targety, to.targetz);
             })
             .start();
     }

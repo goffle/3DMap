@@ -61,11 +61,9 @@ function init(lat, lon) {
     document.addEventListener('resize', onElementResize, false);
     document.addEventListener('mousemove', onDocumentMouseMove, false);
 
-
     tiles = new Tiles(scene);
-    tiles.setImage('http://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}.png');
-    tiles.setTopo('https://tile.mapzen.com/mapzen/vector/v1/buildings/{z}/{x}/{y}.topojson?api_key=mapzen-JEvUQFv');
-
+    tiles.createTopoTiles('https://tile.mapzen.com/mapzen/vector/v1/buildings/{z}/{x}/{y}.topojson?api_key=mapzen-JEvUQFv');
+    tiles.createImageTiles('http://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}.png');
 }
 
 function onElementResize() {
@@ -93,10 +91,19 @@ function onDocumentMouseMove(event) {
 
 function onDocumentMouseDown(event) {
     event.preventDefault();
-    const obj = getObject(mouse);
-    if (obj) {
-        CameraController.flyToPoint(obj.point);
+
+    let obj = tiles._tiles[0].getObject(mouse);
+    if (!obj) {
+        obj = getObject(mouse);
     }
+    if (obj) {
+
+        const polygonMaterial = new THREE.MeshLambertMaterial({ color: Math.random() * 0xffffff, emissive: 0xD4DADC, side: THREE.BackSide });
+
+        obj.object.material = polygonMaterial;
+        CameraController.flyToPoint(obj.point, 90, 200);
+    }
+
 }
 
 function getObject(pos) {
@@ -111,10 +118,12 @@ function addObject(lat, lon) {
     var material = new THREE.MeshBasicMaterial({ color: 0xff0000 });
     var geometry = new THREE.BoxGeometry(10, 50, 10);
     var cube = new THREE.Mesh(geometry, material);
+
     const pt = World.latLonToPoint(LatLon(lat, lon));
     cube.position.x = pt.x;
     cube.position.y = 20;
     cube.position.z = pt.y;
+
 
     objects.push(cube);
     dataGroup.add(cube);

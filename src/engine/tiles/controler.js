@@ -8,7 +8,7 @@ import DataTile from './tileData';
 import TileCache from './cache';
 
 export default class TileControler {
-    constructor(url, type, scene, options = {}) {
+    constructor(url, type, options = {}) {
 
         this._type = type;
         this._url = url;
@@ -19,15 +19,36 @@ export default class TileControler {
         this._maxLOD = options.maxLOD ? options.maxLOD : 23;
         this._minLOD = options.minLOD ? options.minLOD : 1;
         this._maxDistance = options.maxDistance ? options.maxDistance : 5000;
+        this._maxHeight = options.maxHeight ? options.maxHeight : -1;
 
         this._tileCache = new TileCache(1000, tile => {
             //this._destroyTile(tile);
         });
-        scene.add(this._tiles);
     }
 
+    getTilesGroup() {
+        return this._tiles;
+    }
+
+    getObject(pos) {
+        const raycaster = new THREE.Raycaster();
+        raycaster.setFromCamera(pos, CameraController.camera);
+
+        const childs = [];
+        this._tiles.children.forEach((o) => {
+            o.children.forEach((i) => {
+                i.children.forEach((j) => {
+                    childs.push(j);
+                })
+            })
+        });
+
+        var intersects = raycaster.intersectObjects(childs);
+        return (intersects.length > 0) ? intersects[0] : null;
+    }
 
     update() {
+        this._updateFrustum();
         this._calculateLOD();
         this._outputTiles();
     }
@@ -84,7 +105,10 @@ export default class TileControler {
 
     _calculateLOD() {
 
-        this._updateFrustum();
+        if (this._maxHeight !== -1 && CameraController.camera.position.y > this._maxHeight) {
+            this._tileList = [];
+            return;
+        }
 
         var checkList = [];
         checkList.push(this._getTile('0'));
@@ -123,7 +147,6 @@ export default class TileControler {
             }
 
             // 3. Else, calculate screen-space error metric for quadcode
-
             if (!this._tileInDistance(currentItem) || !this._tileInFrustum(currentItem)) {
                 checkList.splice(count, 1);
             } else if (this._screenSpaceError(currentItem)) {
