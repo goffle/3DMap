@@ -2,28 +2,102 @@
 <html lang="en">
 
 <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <meta name="theme-color" content="#000000">
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta name="theme-color" content="#000000">
+  <!--
+      manifest.json provides metadata used when your web app is added to the
+      homescreen on Android. See https://developers.google.com/web/fundamentals/engage-and-retain/web-app-manifest/
+    -->
+  <link rel="manifest" href="%PUBLIC_URL%/manifest.json">
+  <title>Chadvise</title>
+  <script>
+    window.onload = function (e) {
+      (function () {
+        var c = {};
+        window.chadvise = c;
+        c.load = function (apikey) {
+          var div = document.createElement('div');
+          div.id = "chadvise";
+          document.body.appendChild(div);
 
-    <link rel="manifest" href="%PUBLIC_URL%/manifest.json">
-    <title>3D Map</title>
+          var s = document.createElement('script');
+          s.type = 'text/javascript';
+          s.async = true;
+          s.src = '/static/bundle.js';
+          s.setAttribute('apikey', apikey);
+          s.id = 'chadvise_script';
+          var x = document.getElementsByTagName('script')[0];
+          x.parentNode.insertBefore(s, x);
+
+        };
+      })();
+      chadvise.SNIPPET_VERSION = '0.0.4';
+      chadvise.load('aiePVN1PoKt1ri9hNzqD');
+    }
+  </script>
 </head>
 
-<body >
-    <noscript>
-        You need to enable JavaScript to run this app.
-    </noscript>
+<body style="height: 2000px">
+  <noscript>
+    You need to enable JavaScript to run this app.
+  </noscript>
 
-    <div id="world" style="width: 100vw;height:100vh;background-color: red;"></div>
-    
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/88/three.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/tween.js/16.3.5/Tween.min.js"></script>
-    <script src='/map.js'></script>
-    <script>
-        var m = new map('world');
-        (function(){var script=document.createElement('script');script.onload=function(){var stats=new Stats();document.body.appendChild(stats.dom);requestAnimationFrame(function loop(){stats.update();requestAnimationFrame(loop)});};script.src='//rawgit.com/mrdoob/stats.js/master/build/stats.min.js';document.head.appendChild(script);})()
-    </script>
-  </body>
+
+  <!-- <script>
+    (function () {
+      var c = {};
+      window.chadvise = c;
+      c.load = function (apikey) {
+        //inject div chadvise
+        var div = document.createElement('div');
+        div.id = "chadvise";
+        document.body.appendChild(div);
+
+        var s = document.createElement('script');
+        s.type = 'text/javascript';
+        s.async = true;
+        s.src = '/static/main.js';
+        s.setAttribute('apikey', apikey);
+        s.id = 'chadvise_script';
+        var x = document.getElementsByTagName('script')[0];
+        debugger;
+        x.parentNode.insertBefore(s, x);
+
+      };
+    })();
+
+    chadvise.SNIPPET_VERSION = '0.0.4';
+    chadvise.load('aiePVN1PoKt1ri9hNzqD');
+  </script> -->
+
+</body>
 
 </html>
+
+
+<script>
+    window.onload = function (e) {
+      (function () {
+        var c = {};
+        window.chadvise = c;
+        c.load = function (apikey) {
+          var div = document.createElement('div');
+          div.id = "chadvise";
+          document.body.appendChild(div);
+
+          var s = document.createElement('script');
+          s.type = 'text/javascript';
+          s.async = true;
+          s.src = 'https://storage.googleapis.com/chadvisesdk/latest/main.js';
+          s.setAttribute('apikey', apikey);
+          s.id = 'chadvise_script';
+          var x = document.getElementsByTagName('script')[0];
+          x.parentNode.insertBefore(s, x);
+
+        };
+      })();
+      chadvise.SNIPPET_VERSION = '0.0.4';
+      chadvise.load('aiePVN1PoKt1ri9hNzqD');
+    }
+  </script>
