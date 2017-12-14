@@ -2,10 +2,7 @@ import TileAbstract from './tileAbstract'
 
 
 export default class TileColor extends TileAbstract {
-  constructor(quadcode) {
-    super(quadcode);
-  }
-
+ 
   _getRandomColor() {
     var letters = '0123456789ABCDEF';
     var color = '#';

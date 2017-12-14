@@ -20,7 +20,7 @@ class CameraController {
 
     }
 
-    flyToPoint(point, degree = 45, dist = 500) {
+    flyToPoint(point, degree = 45, dist = 500, cb) {
 
         const a = dist * Math.sin(degree * Math.PI / 180);
         const o = dist * Math.cos(degree * Math.PI / 180);
@@ -59,6 +59,7 @@ class CameraController {
                 this.camera.lookAt(to.targetx, to.targety, to.targetz);
                 this.camera.position.set(to.positionx, to.positiony, to.positionz);
                 this.controls.target.set(to.targetx, to.targety, to.targetz);
+                cb();
             })
             .start();
     }

@@ -6,8 +6,6 @@ import { latLon as LatLon } from './geo/LatLon';
 const R = 6378137;
 const MAX_LATITUDE = 85.0511287798;
 
-// WGS84 eccentricity
-const ECC = 0.081819191;
 const ECC2 = 0.081819191 * 0.081819191;
 
 class World {
@@ -59,7 +57,6 @@ class World {
       return [k, k];
     } else {
       var lat = latlon.lat * rad;
-      var lon = latlon.lon * rad;
 
       var a = R;
 

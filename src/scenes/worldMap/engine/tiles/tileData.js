@@ -1,7 +1,4 @@
 import TileAbstract from './tileAbstract';
-import world from './../world';
-import { latLon as LatLon } from './../geo/LatLon';
-const reqwest = require('reqwest');
 
 var material = new THREE.MeshBasicMaterial({ color: 0xff0000 });
 

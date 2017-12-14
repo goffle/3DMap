@@ -15,7 +15,6 @@
 // generate a custom mesh
 
 import { latLon as LatLon } from '../geo/LatLon';
-import { point as Point } from '../geo/Point';
 import earcut from 'earcut';
 import extrudePolygon from '../util/extrudePolygon';
 import Buffer from '../util/Buffer';
@@ -80,11 +79,8 @@ function getBufferAttributes(projectedCoordinates, height) {
       _colours.push(_colour);
     });
 
-    var flat = true;
 
     if (extruded.sides) {
-      flat = false;
-
       // Set up colours for every vertex with poor-mans AO on the sides
       extruded.sides.forEach((face, fi) => {
         _colour = [];

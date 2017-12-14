@@ -6,12 +6,24 @@ import './index.css';
 //import { login } from './redux/auth/actions'
 
 import WorldMap from './scenes/worldMap';
+import EditableMap from './scenes/editableMap'
 
 class App extends Component {
+
+  state = {
+    editBuilding: false,
+    editBuildingId: 0,
+    display3D: true
+  }
 
   componentWillMount() {
     console.log('Loading : ' + this.props.apikey);
     //this.props.login(this.props.apikey);
+  }
+
+
+  editBuilding(b) {
+    this.setState({ editBuilding: true, editBuildingId: b })
   }
 
   render() {
@@ -19,9 +31,22 @@ class App extends Component {
     //   return <div />;
     // }
 
-
     return (
-      <WorldMap lat={1.339560} lon={103.844943} />
+      <div>
+        <EditBuilding
+          visible={this.state.editBuilding}
+          id={this.state.editBuildingId}
+          edit={() => { this.setState({ display3D: false }) }}
+          cancel={() => { this.setState({ editBuilding: false }) }}
+        />
+        <WorldMap
+          lat={1.339560}
+          lon={103.844943}
+          topo={this.state.display3D}
+          onSelectedBuilding={this.editBuilding.bind(this)}
+        />
+        <EditableMap />
+      </div >
     );
   }
 }
@@ -30,6 +55,23 @@ const mapStateToProps = ({ step, auth }) => {
   return {};
 }
 export default connect(mapStateToProps, {})(App);
+
+
+const EditBuilding = (props) => {
+  if (!props.visible) {
+    return <div />
+  }
+  return (
+    <div className='overlay' onClick={(event) => { event.stopPropagation ? event.stopPropagation() : null }}>
+      <div className='dialog'>
+        <h2>Edit Building {props.id} ? </h2>
+        <button className='button' onClick={() => { props.edit() }}>Yes</button>
+        <button className='button' onClick={() => { props.cancel() }}>No</button>
+      </div>
+    </div>
+  )
+
+}
 
 
 // componentWillMount() {

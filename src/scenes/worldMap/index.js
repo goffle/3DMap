@@ -5,8 +5,6 @@ import { latLon as LatLon } from './engine/geo/LatLon';
 import World from './engine/world';
 import Tiles from './engine/tiles';
 import ReactResizeDetector from 'react-resize-detector';
-import { googleMap } from '../../config.js';
-
 
 var camera, scene, renderer, tiles, element, mouse = new THREE.Vector2();
 var dataGroup = new THREE.Group();
@@ -17,24 +15,44 @@ class WorldMap extends Component {
     componentDidMount() {
         this.init();
         animate();
-
+        document.addEventListener('mouseup', this.onDocumentMouseUp.bind(this), false);
         document.addEventListener('mousedown', this.onDocumentMouseDown.bind(this), false);
     }
 
     onDocumentMouseDown(event) {
-        mouse.x = (event.clientX / renderer.getSize().width) * 2 - 1;
-        mouse.y = - (event.clientY / renderer.getSize().height) * 2 + 1;
 
-        let obj = tiles._tiles[0].getObject(mouse);
+        mouse.x = event.clientX;
+        mouse.y = event.clientY;
+
+    }
+
+    onDocumentMouseUp(event) {
+        const val = 10;
+
+        if (event.which !== 1)
+            return;
+
+        if ((Math.abs(event.x - mouse.x) > val) || (Math.abs(event.y - mouse.y) > val)) {
+            //drag
+            return;
+        }
+
+        const position = new THREE.Vector2();
+        position.x = (event.clientX / renderer.getSize().width) * 2 - 1;
+        position.y = - (event.clientY / renderer.getSize().height) * 2 + 1;
+
+
+        let obj = tiles._tiles[0].getObject(position);
         if (!obj) {
-            obj = this.getObject(mouse);
+            obj = this.getObject(position);
         }
 
         if (obj) {
-
             const polygonMaterial = new THREE.MeshLambertMaterial({ color: Math.random() * 0xffffff, emissive: 0xD4DADC, side: THREE.BackSide });
             obj.object.material = polygonMaterial;
-            CameraController.flyToPoint(obj.point, 90, 200);
+            CameraController.flyToPoint(obj.point, 90, 200, () => {
+                this.props.onSelectedBuilding(obj.object.id);
+            });
         }
     }
 
@@ -44,7 +62,6 @@ class WorldMap extends Component {
         var intersects = raycaster.intersectObjects(objects);
         return (intersects.length > 0) ? intersects[0] : null;
     }
-
 
     render() {
         return (
@@ -96,10 +113,6 @@ class WorldMap extends Component {
 
         renderer.render(scene, camera);
     }
-
-
-
-
 
 }
 

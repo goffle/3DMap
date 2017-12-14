@@ -84,11 +84,6 @@ export default class TileControler {
             return;
         }
 
-        var count = 0;
-        for (var i = 0; i < this._tiles.children.length; i++) {
-            count += this._tiles.children[i].children.length;
-        }
-
         for (var i = this._tiles.children.length - 1; i >= 0; i--) {
             this._tiles.remove(this._tiles.children[i]);
         }
@@ -136,7 +131,7 @@ export default class TileControler {
         var currentItem;
         var quadcode;
         // 1. Loop until count equals check list length
-        while (count != checkList.length) {
+        while (count !== checkList.length) {
             currentItem = checkList[count];
             quadcode = currentItem.getQuadCode();
 
