@@ -1,5 +1,3 @@
-//var THREE = require('three');
-
 import { latLon as LatLon } from './geo/LatLon';
 
 import CameraController from "./camera/controller";
@@ -56,16 +54,18 @@ function init(lat, lon) {
 
     scene.add(dataGroup);
 
-    document.addEventListener('mousedown', onDocumentMouseDown, false);
-    document.addEventListener('touchstart', onDocumentTouchStart, false);
-    document.addEventListener('resize', onElementResize, false);
-    document.addEventListener('mousemove', onDocumentMouseMove, false);
+    // document.addEventListener('mousedown', onDocumentMouseDown, false);
+    // document.addEventListener('touchstart', onDocumentTouchStart, false);
+    // document.addEventListener('resize', onElementResize, false);
+    // document.addEventListener('mousemove', onDocumentMouseMove, false);
 
     tiles = new Tiles(scene);
     tiles.createTopoTiles('https://tile.mapzen.com/mapzen/vector/v1/buildings/{z}/{x}/{y}.topojson?api_key=mapzen-JEvUQFv');
     tiles.createImageTiles('http://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}.png');
 }
 
+
+/*
 function onElementResize() {
     camera.aspect = element.clientWidth / element.clientHeight;
     camera.updateProjectionMatrix();
@@ -103,8 +103,8 @@ function onDocumentMouseDown(event) {
         obj.object.material = polygonMaterial;
         CameraController.flyToPoint(obj.point, 90, 200);
     }
-
 }
+*/
 
 function getObject(pos) {
     const raycaster = new THREE.Raycaster();

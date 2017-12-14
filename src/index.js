@@ -8,6 +8,8 @@ import App from './App';
 const version = require('../package.json').version;
 console.log('Loading MAP ' + version)
 
+console.log('COUCOU')
+
 ReactDOM.render(
     <div>
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" />

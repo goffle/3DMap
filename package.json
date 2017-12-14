@@ -1,20 +1,27 @@
 {
-  "name": "chatbox",
+  "name": "iotmap",
   "version": "0.2.9",
   "private": true,
   "dependencies": {
     "classnames": "^2.2.5",
+    "earcut": "^2.1.2",
     "firebase": "^4.6.0",
+    "geojson-merge": "^0.3.0",
     "google-map-react": "^0.24.0",
+    "lodash.assign": "^4.2.0",
     "mixpanel-browser": "^2.13.0",
     "promise": "^8.0.1",
     "react": "^15.6.2",
     "react-addons-css-transition-group": "^15.6.2",
     "react-dom": "^15.6.2",
     "react-redux": "^5.0.6",
+    "react-resize-detector": "^1.1.0",
     "react-shadow": "^16.1.0",
     "redux": "^3.7.2",
     "redux-saga": "^0.16.0",
+    "reqwest": "^2.0.5",
+    "three": "^0.88.0",
+    "topojson": "^3.0.2",
     "webcomponents.js": "^0.7.24"
   },
   "devDependencies": {
@@ -113,7 +120,9 @@
       "no-useless-escape": "off"
     },
     "globals": {
-      "__STYLE__": true
+      "__STYLE__": true,
+      "THREE": true,
+      "TWEEN": true
     }
   }
 }
