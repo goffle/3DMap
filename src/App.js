@@ -6,12 +6,6 @@ import './index.css';
 //import { login } from './redux/auth/actions'
 
 import WorldMap from './scenes/worldMap';
-// import Rule from './scenes/rule';
-// import Chat from './scenes/chat';
-// import Map from './scenes/map';
-
-
-console.log('SEB')
 
 class App extends Component {
 
@@ -27,7 +21,7 @@ class App extends Component {
 
 
     return (
-      <WorldMap />
+      <WorldMap lat={1.339560} lon={103.844943} />
     );
   }
 }
