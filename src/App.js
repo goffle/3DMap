@@ -30,7 +30,13 @@ class App extends Component {
     // if (!this.props.auth.userId || !this.props.auth.organisationId) {
     //   return <div />;
     // }
-
+/*
+        <WorldMap
+          lat={1.339560}
+          lon={103.844943}
+          topo={this.state.display3D}
+          onSelectedBuilding={this.editBuilding.bind(this)}
+        />*/
     return (
       <div>
         <EditBuilding
@@ -39,12 +45,7 @@ class App extends Component {
           edit={() => { this.setState({ display3D: false }) }}
           cancel={() => { this.setState({ editBuilding: false }) }}
         />
-        <WorldMap
-          lat={1.339560}
-          lon={103.844943}
-          topo={this.state.display3D}
-          onSelectedBuilding={this.editBuilding.bind(this)}
-        />
+
         <EditableMap />
       </div >
     );

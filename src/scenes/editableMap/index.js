@@ -1,27 +1,32 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 
-class editableMap extends Component {
+const cheese = 'https://cdn-images-1.medium.com/max/1600/1*W1IPZj18aerIffSO321a2w.png'
 
+class Canvas extends Component {
     componentDidMount() {
-        console.log('COUCOU')
-
-
-        // <canvas id="tutorial" width="150" height="150"></canvas>
+        const canvas = this.refs.canvas
+        const ctx = canvas.getContext("2d")
+        var img = new Image;
+        img.onload = () => {
+            ctx.drawImage(img, 0, 0)
+            ctx.font = "40px Courier"
+            ctx.fillText('COUCOU', 210, 75)
+        }
+        img.src = cheese;
     }
-
     render() {
+        console
         return (
-            <div className='editor' ref={(elt) => { this.editorElement = elt; }} >
-                EDIT
+            <div>
+                <canvas ref="canvas" width={640} height={425} />
             </div>
-        );
+        )
     }
-
 }
 
 const mapStateToProps = () => {
     return {};
 }
-export default connect(mapStateToProps, {})(editableMap);
+export default connect(mapStateToProps, {})(Canvas);
 
