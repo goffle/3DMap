@@ -6,6 +6,7 @@
     "classnames": "^2.2.5",
     "earcut": "^2.1.2",
     "firebase": "^4.6.0",
+    "fs": "^0.0.1-security",
     "geojson-merge": "^0.3.0",
     "google-map-react": "^0.24.0",
     "lodash.assign": "^4.2.0",

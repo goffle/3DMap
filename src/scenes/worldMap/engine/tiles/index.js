@@ -32,8 +32,8 @@ export default class Tiles {
 
     createTopoTiles(url) {
         const topoTileOptions = {
-            maxDistance: 1000,
-            maxHeight: 800,
+            maxDistance: 9999999,
+            maxHeight: 9999999,
             maxLOD: 15,
             minLOD: 15
         }

@@ -22,11 +22,8 @@ import world from './../world';
 
 
 export default function createPolygon(originalCoordinates, height = 16) {
-
   const coordinates = isSingle(originalCoordinates) ? [originalCoordinates] : originalCoordinates;
-
   var projectedCoordinates = projectandconverteCoordinates(coordinates);
-
   const buffersAttributes = getBufferAttributes(projectedCoordinates, height);
   return createGeometry(buffersAttributes);
 }

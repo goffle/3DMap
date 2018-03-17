@@ -8,7 +8,6 @@ import App from './App';
 const version = require('../package.json').version;
 console.log('Loading MAP ' + version)
 
-console.log('COUCOU')
 
 ReactDOM.render(
     <div>

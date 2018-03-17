@@ -8,7 +8,9 @@ import createPolygon from './../geometry/Polygon';
 import reqwest from 'reqwest';
 
 const lineMaterial = new THREE.LineBasicMaterial({ color: 0xEAEAEA, linewidth: 1 });
-const polygonMaterial = new THREE.MeshLambertMaterial({ color: 0xEBF3ED, emissive: 0xD4DADC, side: THREE.BackSide });
+const polygonMaterial = new THREE.MeshLambertMaterial({ color: 0xEBF3ED, emissive: 0xD4DADC, side: THREE.DoubleSide  });
+
+var mesh = null;
 
 
 export default class TileTopo extends TileAbstract {
@@ -20,18 +22,36 @@ export default class TileTopo extends TileAbstract {
 
   _requestTile() {
     return new Promise((resolve, reject) => {
+      if(!mesh){
+        const file =require('./../../../../assets/map.topojson');
+        var request = new XMLHttpRequest();
+        request.open("GET", file, false);
+        request.send(null)
+        console.log('START PARSE')
+        var obj = JSON.parse(request.responseText);
+        console.log('GET MESH')
+        mesh = this.getMeshFromTopo(obj);
+      }
+      console.log('MESH ',mesh)
+      resolve(mesh);
+    });
+  }
+
+/*
+  _requestTile() {
+    return new Promise((resolve, reject) => {
       var urlParams = {
         x: this._tile[0],
         y: this._tile[1],
         z: this._tile[2]
       };
       var url = this.getTileURL(urlParams, this._path);
-
       reqwest({
         url: url,
         type: 'json',
         crossOrigin: true
       }).then(res => {
+
         const mesh = this.getMeshFromTopo(res);
         if (mesh) {
           resolve(mesh);
@@ -41,9 +61,10 @@ export default class TileTopo extends TileAbstract {
       }).catch(err => {
         console.error(err);
       });
+    
     });
   }
-
+  */
 
   getUnMergedMesh(features) {
 
@@ -52,19 +73,20 @@ export default class TileTopo extends TileAbstract {
 
     features.forEach(feature => {
       const { type, coordinates } = feature.geometry;
+
       var height = feature.properties.height;
 
       if (!coordinates) {
         return;
       }
-
+   
       if (type === 'Polygon' || type === 'MultiPolygon') {
-        var geometry = createPolygon(coordinates, height);
+        var geometry = createPolygon(coordinates, 20);
 
         var buildingMesh = new THREE.Mesh(geometry, polygonMaterial);
         var geo = new THREE.EdgesGeometry(geometry);
         var wireframe = new THREE.LineSegments(geo, lineMaterial);
-        buildingMesh.add(wireframe);
+        // buildingMesh.add(wireframe);
         g.add(buildingMesh);
         tag = true;
       }
@@ -93,7 +115,7 @@ export default class TileTopo extends TileAbstract {
       }
 
       if (type === 'Polygon' || type === 'MultiPolygon') {
-        var geometry = createPolygon(coordinates, height);
+        var geometry = createPolygon(coordinates, 20);
 
         var pxTmpGeometry = new THREE.Geometry().fromBufferGeometry(geometry);
         tmpGeometry.merge(pxTmpGeometry);
@@ -119,16 +141,17 @@ export default class TileTopo extends TileAbstract {
   }
 
   getMeshFromTopo(data) {
+    if (!data) {      
+      return null;   
+     }
 
-    if (!data) {
-      return null;
-    }
     var collections = [];
     for (var tk in data.objects) {
       collections.push(feature(data, data.objects[tk]));
     }
 
     const { features } = geojsonMerge(collections);
+
 
     return this.getUnMergedMesh(features);
 
