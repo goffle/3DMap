@@ -122,7 +122,8 @@
     "globals": {
       "__STYLE__": true,
       "THREE": true,
-      "TWEEN": true
+      "TWEEN": true,
+      "L": true
     }
   }
 }

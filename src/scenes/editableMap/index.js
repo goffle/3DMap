@@ -5,22 +5,17 @@ const cheese = 'https://cdn-images-1.medium.com/max/1600/1*W1IPZj18aerIffSO321a2
 
 class Canvas extends Component {
     componentDidMount() {
-        const canvas = this.refs.canvas
-        const ctx = canvas.getContext("2d")
-        var img = new Image;
-        img.onload = () => {
-            ctx.drawImage(img, 0, 0)
-            ctx.font = "40px Courier"
-            ctx.fillText('COUCOU', 210, 75)
-        }
-        img.src = cheese;
+        const mapElement = this.refs.map
+        var mymap = L.map(mapElement).setView([51.505, -0.09], 13);
+
+        L.tileLayer('http[s]://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}.png', {
+            maxZoom: 18,
+            attribution: ''
+        }).addTo(mymap);
     }
     render() {
-        console
         return (
-            <div>
-                <canvas ref="canvas" width={640} height={425} />
-            </div>
+            <div ref="map" />
         )
     }
 }
