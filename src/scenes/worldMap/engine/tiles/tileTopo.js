@@ -48,13 +48,13 @@ export default class TileTopo extends TileAbstract {
       console.log(url);
       reqwest({ url: url, type: 'json', crossOrigin: true })
         .then(res => {
-          reject('OK ' + url);
-          // const mesh = this.getMeshFromTopo(res);
-          // if (mesh) {
-          //   resolve(mesh);
-          // } else {
-          //   reject();
-          // }
+          //       reject('OK ' + url);
+          const mesh = this.getMeshFromTopo(res);
+          if (mesh) {
+            resolve(mesh);
+          } else {
+            reject();
+          }
         }).catch((err) => {
           reject('KO ' + url);
           // reject();
@@ -80,7 +80,7 @@ export default class TileTopo extends TileAbstract {
       }
 
       if (type === 'Polygon' || type === 'MultiPolygon') {
-        var geometry = createPolygon(coordinates, 20);
+        var geometry = createPolygon(coordinates, height);
 
         var buildingMesh = new window.THREE.Mesh(geometry, polygonMaterial);
         var geo = new window.THREE.EdgesGeometry(geometry);

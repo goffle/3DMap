@@ -66,7 +66,7 @@ class WorldMap extends Component {
     render() {
         return (
             <div className='map' ref={(elt) => { this.mapElement = elt; }} >
-                <ReactResizeDetector handleWidth handleHeight onResize={this._onResize} />
+                {/* <ReactResizeDetector handleWidth handleHeight onResize={this._onResize} /> */}
             </div>
         );
     }
@@ -88,7 +88,7 @@ class WorldMap extends Component {
 
         element = this.mapElement;
         element.appendChild(renderer.domElement);
-        renderer.setSize(800, 600);
+        renderer.setSize(1920, 1080);
         renderer.setClearColor(0xE0EAF1, 1); // the default
 
         var light1 = new window.THREE.DirectionalLight(0x131313, 0.7);
