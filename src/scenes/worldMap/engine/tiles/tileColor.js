@@ -1,6 +1,5 @@
 import TileAbstract from './tileAbstract'
 
-
 export default class TileColor extends TileAbstract {
  
   _getRandomColor() {

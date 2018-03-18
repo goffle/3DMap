@@ -8,10 +8,7 @@ import createPolygon from './../geometry/Polygon';
 import reqwest from 'reqwest';
 
 const lineMaterial = new THREE.LineBasicMaterial({ color: 0xEAEAEA, linewidth: 1 });
-const polygonMaterial = new THREE.MeshLambertMaterial({ color: 0xEBF3ED, emissive: 0xD4DADC, side: THREE.DoubleSide  });
-
-var mesh = null;
-
+const polygonMaterial = new THREE.MeshLambertMaterial({ color: 0xEBF3ED, emissive: 0xD4DADC, side: THREE.DoubleSide });
 
 export default class TileTopo extends TileAbstract {
   constructor(quadcode, path) {
@@ -20,24 +17,24 @@ export default class TileTopo extends TileAbstract {
     this._request = null;
   }
 
-  _requestTile() {
-    return new Promise((resolve, reject) => {
-      if(!mesh){
-        const file =require('./../../../../assets/map.topojson');
-        var request = new XMLHttpRequest();
-        request.open("GET", file, false);
-        request.send(null)
-        console.log('START PARSE')
-        var obj = JSON.parse(request.responseText);
-        console.log('GET MESH')
-        mesh = this.getMeshFromTopo(obj);
-      }
-      console.log('MESH ',mesh)
-      resolve(mesh);
-    });
-  }
+  // _requestTile() {
+  //   return new Promise((resolve, reject) => {
+  //     if(!mesh){
+  //       const file =require('./../../../../assets/map.topojson');
+  //       var request = new XMLHttpRequest();
+  //       request.open("GET", file, false);
+  //       request.send(null)
+  //       console.log('START PARSE')
+  //       var obj = JSON.parse(request.responseText);
+  //       console.log('GET MESH')
+  //       mesh = this.getMeshFromTopo(obj);
+  //     }
+  //     console.log('MESH ',mesh)
+  //     resolve(mesh);
+  //   });
+  // }
 
-/*
+
   _requestTile() {
     return new Promise((resolve, reject) => {
       var urlParams = {
@@ -45,26 +42,28 @@ export default class TileTopo extends TileAbstract {
         y: this._tile[1],
         z: this._tile[2]
       };
-      var url = this.getTileURL(urlParams, this._path);
-      reqwest({
-        url: url,
-        type: 'json',
-        crossOrigin: true
-      }).then(res => {
 
-        const mesh = this.getMeshFromTopo(res);
-        if (mesh) {
-          resolve(mesh);
-        } else {
-          reject();
-        }
-      }).catch(err => {
-        console.error(err);
-      });
-    
+      var url = this.getTileURL(urlParams, this._path);
+
+      console.log(url);
+      reqwest({ url: url, type: 'json', crossOrigin: true })
+        .then(res => {
+          reject('OK ' + url);
+          // const mesh = this.getMeshFromTopo(res);
+          // if (mesh) {
+          //   resolve(mesh);
+          // } else {
+          //   reject();
+          // }
+        }).catch((err) => {
+          reject('KO ' + url);
+          // reject();
+          // console.error(err);
+        });
+
     });
   }
-  */
+
 
   getUnMergedMesh(features) {
 
@@ -79,7 +78,7 @@ export default class TileTopo extends TileAbstract {
       if (!coordinates) {
         return;
       }
-   
+
       if (type === 'Polygon' || type === 'MultiPolygon') {
         var geometry = createPolygon(coordinates, 20);
 
@@ -134,16 +133,16 @@ export default class TileTopo extends TileAbstract {
 
     var geo = new THREE.EdgesGeometry(tmpGeometry);
     var wireframe = new THREE.LineSegments(geo, lineMaterial);
-    buildingMesh.add(wireframe);
+    // buildingMesh.add(wireframe);
 
     return buildingMesh;
 
   }
 
   getMeshFromTopo(data) {
-    if (!data) {      
-      return null;   
-     }
+    if (!data) {
+      return null;
+    }
 
     var collections = [];
     for (var tk in data.objects) {

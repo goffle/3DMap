@@ -54,10 +54,14 @@ export default class TileAbstract {
     setTimeout(() => {
       if (!this._isInit) {
         this._isInit = true;
-        this._requestTile().then((mesh) => {
-          this._isReady = true;
-          this._mesh.add(mesh);
-        });
+        this._requestTile()
+          .then((mesh) => {
+            this._isReady = true;
+            this._mesh.add(mesh);
+          })
+          .catch((err) => {
+            console.log(err)
+          })
       }
     }, 0);
   }

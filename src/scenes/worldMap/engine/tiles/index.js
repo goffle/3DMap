@@ -16,49 +16,33 @@ export default class Tiles {
 
     createImageTiles(url) {
         const imageTileOptions = { maxDistance: 200000, maxLOD: 18, minLOD: 1 }
-        const imageTile = new TileControler(
-            url,
-            'image',
-            imageTileOptions);
+        const imageTileController = new TileControler(url, 'image', imageTileOptions);
 
-        this._tiles.push(imageTile);
+        this._tiles.push(imageTileController);
 
-
-        const mesh = imageTile.getTilesGroup();
+        const mesh = imageTileController.getTilesGroup();
         this._scene.add(mesh);
 
         return mesh;
     }
 
     createTopoTiles(url) {
-        const topoTileOptions = {
-            maxDistance: 9999999,
-            maxHeight: 9999999,
-            maxLOD: 15,
-            minLOD: 15
-        }
+        const topoTileOptions = { maxDistance: 10000, maxLOD: 15, minLOD: 15 }
+        const topoTileController = new TileControler(url, 'topo', topoTileOptions);
+        this._tiles.push(topoTileController);
 
-        const topoTile = new TileControler(
-            url,
-            'topo',
-            topoTileOptions
-        );
-        this._tiles.push(topoTile);
-
-        const mesh = topoTile.getTilesGroup();
+        const mesh = topoTileController.getTilesGroup();
         this._scene.add(mesh);
 
         return mesh;
     }
 
     createDebugTiles() {
-        const colorTile = new TileControler(
-            '',
-            'color'
-        )
-        this._tiles.push(colorTile);
+        const imageTileOptions = { maxDistance: 200000, maxLOD: 18, minLOD: 1 }
+        const colorTileController = new TileControler('', 'color', imageTileOptions)
+        this._tiles.push(colorTileController);
 
-        const mesh = colorTile.getTilesGroup();
+        const mesh = colorTileController.getTilesGroup();
         this._scene.add(mesh);
         return mesh;
 

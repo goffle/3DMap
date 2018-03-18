@@ -1,9 +1,6 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 
-import './index.css';
-
-//import { login } from './redux/auth/actions'
 
 import WorldMap from './scenes/worldMap';
 import EditableMap from './scenes/editableMap'

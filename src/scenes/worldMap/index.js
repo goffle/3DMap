@@ -108,8 +108,10 @@ class WorldMap extends Component {
         scene.add(dataGroup);
 
         tiles = new Tiles(scene);
-        tiles.createTopoTiles('https://tile.mapzen.com/mapzen/vector/v1/buildings/{z}/{x}/{y}.topojson?api_key=mapzen-JEvUQFv');
+
+        tiles.createTopoTiles('https://storage.googleapis.com/dmap-7724a.appspot.com/v1/{z}/{x}/{y}/map.topojson');
         tiles.createImageTiles('http://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}.png');
+        //tiles.createDebugTiles();
 
         renderer.render(scene, camera);
     }
