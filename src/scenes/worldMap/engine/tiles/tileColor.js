@@ -13,9 +13,9 @@ export default class TileColor extends TileAbstract {
 
   _requestTile() {
     return new Promise((resolve, reject) => {
-      var geometry = new THREE.PlaneGeometry(this._side, this._side);
-      var material = new THREE.MeshBasicMaterial({ color: this._getRandomColor(), side: THREE.FrontSide });
-      var plane = new THREE.Mesh(geometry, material);
+      var geometry = new window.THREE.PlaneGeometry(this._side, this._side);
+      var material = new window.THREE.MeshBasicMaterial({ color: this._getRandomColor(), side: window.THREE.FrontSide });
+      var plane = new window.THREE.Mesh(geometry, material);
       plane.position.x = this._center[0];
       plane.position.y = 0;
       plane.position.z = this._center[1];

@@ -1,14 +1,18 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import { Provider } from 'react-redux';
-import ShadowDOM from 'react-shadow';
-import { store } from './redux/store';
+import { createStore } from 'redux';
+
 import './index.css';
-
 import App from './App';
+import registerServiceWorker from './registerServiceWorker';
 
-const version = require('../package.json').version;
-console.log('Loading MAP ' + version)
+const store = createStore(() => { });
 
+ReactDOM.render(
+    <Provider store={store}>
+        <App />
+    </Provider>
+    , document.getElementById('root'));
+registerServiceWorker();
 
-ReactDOM.render(<App />, document.getElementById('root'));

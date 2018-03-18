@@ -43,7 +43,7 @@ var Buffer = (function() {
   };
 
   var createLineGeometry = function(lines, offset) {
-    var geometry = new THREE.BufferGeometry();
+    var geometry = new window.THREE.BufferGeometry();
 
     var vertices = new Float32Array(lines.verticesCount * 3);
     var colours = new Float32Array(lines.verticesCount * 3);
@@ -92,11 +92,11 @@ var Buffer = (function() {
     }
 
     // itemSize = 3 because there are 3 values (components) per vertex
-    geometry.addAttribute('position', new THREE.BufferAttribute(vertices, 3));
-    geometry.addAttribute('color', new THREE.BufferAttribute(colours, 3));
+    geometry.addAttribute('position', new window.THREE.BufferAttribute(vertices, 3));
+    geometry.addAttribute('color', new window.THREE.BufferAttribute(colours, 3));
 
     if (pickingIds) {
-      geometry.addAttribute('pickingId', new THREE.BufferAttribute(pickingIds, 1));
+      geometry.addAttribute('pickingId', new window.THREE.BufferAttribute(pickingIds, 1));
     }
 
     geometry.computeBoundingBox();
@@ -106,7 +106,7 @@ var Buffer = (function() {
 
   // TODO: Make picking IDs optional
   var createGeometry = function(attributes, offset) {
-    var geometry = new THREE.BufferGeometry();
+    var geometry = new window.THREE.BufferGeometry();
 
     // Three components per vertex per face (3 x 3 = 9)
     var vertices = new Float32Array(attributes.facesCount * 9);
@@ -119,12 +119,12 @@ var Buffer = (function() {
       pickingIds = new Float32Array(attributes.facesCount * 3);
     }
 
-    var pA = new THREE.Vector3();
-    var pB = new THREE.Vector3();
-    var pC = new THREE.Vector3();
+    var pA = new window.THREE.Vector3();
+    var pB = new window.THREE.Vector3();
+    var pC = new window.THREE.Vector3();
 
-    var cb = new THREE.Vector3();
-    var ab = new THREE.Vector3();
+    var cb = new window.THREE.Vector3();
+    var ab = new window.THREE.Vector3();
 
     var index;
     var _faces;
@@ -230,12 +230,12 @@ var Buffer = (function() {
     }
 
     // itemSize = 3 because there are 3 values (components) per vertex
-    geometry.addAttribute('position', new THREE.BufferAttribute(vertices, 3));
-    geometry.addAttribute('normal', new THREE.BufferAttribute(normals, 3));
-    geometry.addAttribute('color', new THREE.BufferAttribute(colours, 3));
+    geometry.addAttribute('position', new window.THREE.BufferAttribute(vertices, 3));
+    geometry.addAttribute('normal', new window.THREE.BufferAttribute(normals, 3));
+    geometry.addAttribute('color', new window.THREE.BufferAttribute(colours, 3));
 
     if (pickingIds) {
-      geometry.addAttribute('pickingId', new THREE.BufferAttribute(pickingIds, 1));
+      geometry.addAttribute('pickingId', new window.THREE.BufferAttribute(pickingIds, 1));
     }
 
     geometry.computeBoundingBox();

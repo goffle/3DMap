@@ -11,9 +11,9 @@ class CameraController {
     init(camera, renderer) {
         this.camera = camera;
         this.camera.position.set(0, 300, 0);
-        this.camera.lookAt(new THREE.Vector3(0, 0, 0));
+        this.camera.lookAt(new window.THREE.Vector3(0, 0, 0));
         this.camera.updateProjectionMatrix();
-        this.controls = new THREE.OrbitControls(this.camera, renderer.domElement);
+        this.controls = new window.THREE.OrbitControls(this.camera, renderer.domElement);
     }
 
     flyToLatLon(LatLon, degree = 45, zoom = 200) {
@@ -45,8 +45,8 @@ class CameraController {
             targetz: point.z
         };
 
-        new TWEEN.Tween(from).to(to, animationDuration)
-            .easing(TWEEN.Easing.Quadratic.InOut)
+        new window.TWEEN.Tween(from).to(to, animationDuration)
+            .easing(window.TWEEN.Easing.Quadratic.InOut)
             .onUpdate(() => {
                 this.camera.lookAt(from.targetx, from.targety, from.targetz);
                 this.camera.position.set(from.positionx, from.positiony, from.positionz);
@@ -73,9 +73,9 @@ class CameraController {
 
 				theta += 0.1;
 
-				camera.position.x = radius * Math.sin( THREE.Math.degToRad( theta ) );
-				camera.position.y = radius * Math.sin( THREE.Math.degToRad( theta ) );
-				camera.position.z = radius * Math.cos( THREE.Math.degToRad( theta ) );
+				camera.position.x = radius * Math.sin( window.THREE.Math.degToRad( theta ) );
+				camera.position.y = radius * Math.sin( window.THREE.Math.degToRad( theta ) );
+				camera.position.z = radius * Math.cos( window.THREE.Math.degToRad( theta ) );
 				camera.lookAt( scene.position );
 
 				renderer.render( scene, camera );

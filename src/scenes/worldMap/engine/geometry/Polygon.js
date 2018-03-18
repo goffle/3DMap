@@ -33,11 +33,11 @@ function getBufferAttributes(projectedCoordinates, height) {
 
   var attributes;
 
-  var colour = new THREE.Color(0x666666);
+  var colour = new window.THREE.Color(0x666666);
 
   // Light and dark colours used for poor-mans AO gradient on object sides
-  var light = new THREE.Color(0xffffff);
-  var shadow = new THREE.Color(0x666666);
+  var light = new window.THREE.Color(0xffffff);
+  var shadow = new window.THREE.Color(0x666666);
 
   // For each polygon
   attributes = projectedCoordinates.map(projectedCoordinate => {
@@ -123,12 +123,12 @@ function toAttributes(polygon) {
   var normals = new Float32Array(polygon.facesCount * 9);
   var colours = new Float32Array(polygon.facesCount * 9);
 
-  var pA = new THREE.Vector3();
-  var pB = new THREE.Vector3();
-  var pC = new THREE.Vector3();
+  var pA = new window.THREE.Vector3();
+  var pB = new window.THREE.Vector3();
+  var pC = new window.THREE.Vector3();
 
-  var cb = new THREE.Vector3();
-  var ab = new THREE.Vector3();
+  var cb = new window.THREE.Vector3();
+  var ab = new window.THREE.Vector3();
 
   var index;
 
@@ -230,12 +230,12 @@ function toAttributes(polygon) {
 }
 
 function createGeometry(attributes) {
-  var geometry = new THREE.BufferGeometry();
+  var geometry = new window.THREE.BufferGeometry();
 
   // itemSize = 3 because there are 3 values (components) per vertex
-  geometry.addAttribute('position', new THREE.BufferAttribute(attributes.vertices, 3));
-  geometry.addAttribute('normal', new THREE.BufferAttribute(attributes.normals, 3));
-  geometry.addAttribute('color', new THREE.BufferAttribute(attributes.colours, 3));
+  geometry.addAttribute('position', new window.THREE.BufferAttribute(attributes.vertices, 3));
+  geometry.addAttribute('normal', new window.THREE.BufferAttribute(attributes.normals, 3));
+  geometry.addAttribute('color', new window.THREE.BufferAttribute(attributes.colours, 3));
 
   geometry.computeBoundingBox();
   return geometry;

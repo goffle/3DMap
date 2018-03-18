@@ -1,11 +1,10 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 
-
 import WorldMap from './scenes/worldMap';
 import EditableMap from './scenes/editableMap'
 
-class App extends Component {
+export default class App extends Component {
 
   state = {
     editBuilding: false,
@@ -43,12 +42,6 @@ class App extends Component {
     );
   }
 }
-
-const mapStateToProps = ({ step, auth }) => {
-  return {};
-}
-export default connect(mapStateToProps, {})(App);
-
 
 const EditBuilding = (props) => {
   if (!props.visible) {

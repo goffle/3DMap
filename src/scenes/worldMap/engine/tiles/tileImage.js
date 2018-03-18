@@ -20,14 +20,14 @@ export default class TileImage extends TileAbstract {
       const planeMesh = this.createMesh();
       var image = document.createElement('img');
       image.addEventListener('load', event => {
-        var texture = new THREE.Texture();
+        var texture = new window.THREE.Texture();
 
         texture.image = image;
         texture.needsUpdate = true;
 
         // Silky smooth images when tilted
-        texture.magFilter = THREE.LinearFilter;
-        texture.minFilter = THREE.LinearMipMapLinearFilter;
+        texture.magFilter = window.THREE.LinearFilter;
+        texture.minFilter = window.THREE.LinearMipMapLinearFilter;
 
         // TODO: Set this to renderer.getMaxAnisotropy() / 4
         texture.anisotropy = 4;
@@ -53,13 +53,13 @@ export default class TileImage extends TileAbstract {
   }
 
   createMesh() {
-    var geom = new THREE.PlaneBufferGeometry(this._side, this._side, 1);
+    var geom = new window.THREE.PlaneBufferGeometry(this._side, this._side, 1);
 
-    var material = new THREE.MeshBasicMaterial({
+    var material = new window.THREE.MeshBasicMaterial({
       depthWrite: false
     });
 
-    var localMesh = new THREE.Mesh(geom, material);
+    var localMesh = new window.THREE.Mesh(geom, material);
     localMesh.rotation.x = -90 * Math.PI / 180;
 
     localMesh.receiveShadow = true;

@@ -1,6 +1,6 @@
 import TileAbstract from './tileAbstract';
 
-var material = new THREE.MeshBasicMaterial({ color: 0xff0000 });
+var material = new window.THREE.MeshBasicMaterial({ color: 0xff0000 });
 
 export default class TileImage extends TileAbstract {
   constructor(quadcode, path) {
@@ -13,8 +13,8 @@ export default class TileImage extends TileAbstract {
   }
 
   createMarker(lat, lon) {
-    var geometry = new THREE.BoxGeometry(10, 100, 10);
-    var cube = new THREE.Mesh(geometry, material);
+    var geometry = new window.THREE.BoxGeometry(10, 100, 10);
+    var cube = new window.THREE.Mesh(geometry, material);
     // const pt = world.pointToLatLon(LatLon(lat, lon));
     // cube.position.x = pt.x;
     // cube.position.z = pt.y;
@@ -34,7 +34,7 @@ export default class TileImage extends TileAbstract {
           v.json().then((vv) => {
             const arr = (vv.response && vv.response.venues) ? vv.response.venues : []
             if (arr.length) {
-              const groupMesh = new THREE.Group();
+              const groupMesh = new window.THREE.Group();
               arr.forEach((element) => {
                 groupMesh.add(this.createMarker(element.location.lat, element.location.lng));
               });

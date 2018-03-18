@@ -13,10 +13,10 @@ export default class TileAbstract {
     this._boundsWorld = helper.tileBoundsFromWGS84(this._boundsLatLon);
     this._center = helper.boundsToCenter(this._boundsWorld);
     this._centerLatlon = world.pointToLatLon(Point(this._center[0], this._center[1]));
-    this._side = (new THREE.Vector3(this._boundsWorld[0], 0, this._boundsWorld[3])).sub(new THREE.Vector3(this._boundsWorld[0], 0, this._boundsWorld[1])).length();
+    this._side = (new window.THREE.Vector3(this._boundsWorld[0], 0, this._boundsWorld[3])).sub(new window.THREE.Vector3(this._boundsWorld[0], 0, this._boundsWorld[1])).length();
     this._pointScale = world.pointScale(this._centerLatlon);
 
-    this._mesh = new THREE.Group();
+    this._mesh = new window.THREE.Group();
     this._isInit = false;
     this._isReady = false;
   }

@@ -7,8 +7,8 @@ import createPolygon from './../geometry/Polygon';
 
 import reqwest from 'reqwest';
 
-const lineMaterial = new THREE.LineBasicMaterial({ color: 0xEAEAEA, linewidth: 1 });
-const polygonMaterial = new THREE.MeshLambertMaterial({ color: 0xEBF3ED, emissive: 0xD4DADC, side: THREE.DoubleSide });
+const lineMaterial = new window.THREE.LineBasicMaterial({ color: 0xEAEAEA, linewidth: 1 });
+const polygonMaterial = new window.THREE.MeshLambertMaterial({ color: 0xEBF3ED, emissive: 0xD4DADC, side: window.THREE.DoubleSide });
 
 export default class TileTopo extends TileAbstract {
   constructor(quadcode, path) {
@@ -67,7 +67,7 @@ export default class TileTopo extends TileAbstract {
 
   getUnMergedMesh(features) {
 
-    const g = new THREE.Group();
+    const g = new window.THREE.Group();
     let tag = false;
 
     features.forEach(feature => {
@@ -82,9 +82,9 @@ export default class TileTopo extends TileAbstract {
       if (type === 'Polygon' || type === 'MultiPolygon') {
         var geometry = createPolygon(coordinates, 20);
 
-        var buildingMesh = new THREE.Mesh(geometry, polygonMaterial);
-        var geo = new THREE.EdgesGeometry(geometry);
-        var wireframe = new THREE.LineSegments(geo, lineMaterial);
+        var buildingMesh = new window.THREE.Mesh(geometry, polygonMaterial);
+        var geo = new window.THREE.EdgesGeometry(geometry);
+        var wireframe = new window.THREE.LineSegments(geo, lineMaterial);
         // buildingMesh.add(wireframe);
         g.add(buildingMesh);
         tag = true;
@@ -101,7 +101,7 @@ export default class TileTopo extends TileAbstract {
 
   getMergedMesh(features) {
 
-    const tmpGeometry = new THREE.Geometry();
+    const tmpGeometry = new window.THREE.Geometry();
 
     let tag = false;
 
@@ -116,7 +116,7 @@ export default class TileTopo extends TileAbstract {
       if (type === 'Polygon' || type === 'MultiPolygon') {
         var geometry = createPolygon(coordinates, 20);
 
-        var pxTmpGeometry = new THREE.Geometry().fromBufferGeometry(geometry);
+        var pxTmpGeometry = new window.THREE.Geometry().fromBufferGeometry(geometry);
         tmpGeometry.merge(pxTmpGeometry);
         tag = true;
       }
@@ -127,12 +127,12 @@ export default class TileTopo extends TileAbstract {
     }
 
     tmpGeometry.computeBoundingBox();
-    var buildingMesh = new THREE.Mesh(tmpGeometry, polygonMaterial);
+    var buildingMesh = new window.THREE.Mesh(tmpGeometry, polygonMaterial);
     // buildingMesh.castShadow = true; //default is false
     // buildingMesh.receiveShadow = true; //default
 
-    var geo = new THREE.EdgesGeometry(tmpGeometry);
-    var wireframe = new THREE.LineSegments(geo, lineMaterial);
+    var geo = new window.THREE.EdgesGeometry(tmpGeometry);
+    var wireframe = new window.THREE.LineSegments(geo, lineMaterial);
     // buildingMesh.add(wireframe);
 
     return buildingMesh;
