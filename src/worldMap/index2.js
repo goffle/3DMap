@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import CameraController from './engine/camera/controller';
+import cameraController from './engine/camera/controller';
 import { latLon as LatLon } from './engine/geo/LatLon';
 import World from './engine/world';
 import Tiles from './engine/tiles';
@@ -12,54 +12,12 @@ var objects = [];
 
 
 class WorldMap extends Component {
-
-    constructor(props) {
-        super(props)
-
-        this._camera = new window.THREE.PerspectiveCamera(70, window.innerWidth / window.innerHeight, 20, 10000000);
-        this._camera.position.x = 200;
-        this._camera.position.y = 365;
-        this._camera.position.z = 200;
-
-        this._scene = new window.THREE.Scene();
-        this._renderer = new window.THREE.WebGLRenderer({ antialias: true });
-
-        this._renderer.setSize(1920, 1080);
-        this._renderer.setClearColor(0xE0EAF1, 1); // the default
-
-        var light1 = new window.THREE.DirectionalLight(0x131313, 0.7);
-        light1.position.set(100, 100, 100);
-        this._scene.add(light1);
-
-        var light2 = new window.THREE.DirectionalLight(0x131313, 0.7);
-        light2.position.set(-100, 100, 100);
-        this._scene.add(light2);
-
-        this._scene.add(new window.THREE.AmbientLight(0x131313));
-
-        CameraController.init(this._camera, this._renderer);
-
-        World.setView(LatLon(this.props.lat, this.props.lon));
-
-        this._scene.add(dataGroup);
-
-        this._tiles = new Tiles(this._scene);
-
-        this._tiles.createTopoTiles('https://storage.googleapis.com/dmap-7724a.appspot.com/v1/{z}/{x}/{y}/map.topojson');
-        this._tiles.createImageTiles('http://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}.png');
-        //tiles.createDebugTiles();
-
-        this._renderer.render(this._scene, this._camera);
-
-    }
-
     componentDidMount() {
-        this.mapElement.appendChild(this._renderer.domElement);
-
+        this.init();
+        animate();
         document.addEventListener('mouseup', this.onDocumentMouseUp.bind(this), false);
         document.addEventListener('mousedown', this.onDocumentMouseDown.bind(this), false);
     }
-
 
     onDocumentMouseDown(event) {
 
@@ -100,18 +58,12 @@ class WorldMap extends Component {
 
     getObject(pos) {
         const raycaster = new window.THREE.Raycaster();
-        raycaster.setFromCamera(pos, this._camera);
+        raycaster.setFromCamera(pos, camera);
         var intersects = raycaster.intersectObjects(objects);
         return (intersects.length > 0) ? intersects[0] : null;
     }
 
     render() {
-        this._tiles.update();
-
-        window.TWEEN.update();
-        this._renderer.render(this._scene, this._camera);
-
-        console.log('RENDER');
         return (
             <div className='map' ref={(elt) => { this.mapElement = elt; }} >
                 {/* <ReactResizeDetector handleWidth handleHeight onResize={this._onResize} /> */}
@@ -120,9 +72,48 @@ class WorldMap extends Component {
     }
 
     _onResize = (width, height) => {
-        if (this._renderer) {
-            this._renderer.setSize(width, height);
+        if (renderer) {
+            renderer.setSize(width, height);
         }
+    }
+
+    init() {
+        camera = new window.THREE.PerspectiveCamera(70, window.innerWidth / window.innerHeight, 20, 10000000);
+        camera.position.x = 200;
+        camera.position.y = 365;
+        camera.position.z = 200;
+
+        scene = new window.THREE.Scene();
+        renderer = new window.THREE.WebGLRenderer({ antialias: true });
+
+        element = this.mapElement;
+        element.appendChild(renderer.domElement);
+        renderer.setSize(1920, 1080);
+        renderer.setClearColor(0xE0EAF1, 1); // the default
+
+        var light1 = new window.THREE.DirectionalLight(0x131313, 0.7);
+        light1.position.set(100, 100, 100);
+        scene.add(light1);
+
+        var light2 = new window.THREE.DirectionalLight(0x131313, 0.7);
+        light2.position.set(-100, 100, 100);
+        scene.add(light2);
+
+        scene.add(new window.THREE.AmbientLight(0x131313));
+
+        CameraController.init(camera, renderer);
+
+        World.setView(LatLon(this.props.lat, this.props.lon));
+
+        scene.add(dataGroup);
+
+        tiles = new Tiles(scene);
+
+        tiles.createTopoTiles('https://storage.googleapis.com/dmap-7724a.appspot.com/v1/{z}/{x}/{y}/map.topojson');
+        tiles.createImageTiles('http://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}.png');
+        //tiles.createDebugTiles();
+
+        renderer.render(scene, camera);
     }
 
 }
@@ -130,9 +121,13 @@ class WorldMap extends Component {
 const mapStateToProps = () => {
     return {};
 }
-
 export default connect(mapStateToProps, {})(WorldMap);
 
 
-
+function animate() {
+    requestAnimationFrame(animate);
+    tiles.update();
+    window.TWEEN.update();
+    renderer.render(scene, camera);
+}
 
