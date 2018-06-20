@@ -5,7 +5,7 @@ import TopoTile from './tileTopo';
 import ColorTile from './tileColor';
 import DataTile from './tileData';
 
-import TileCache from './cache';
+import TileCache from './utils/cache';
 
 export default class TileControler {
     constructor(url, type, options = {}) {

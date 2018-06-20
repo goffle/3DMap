@@ -27,7 +27,7 @@ export default class Tiles {
     }
 
     createTopoTiles(url) {
-        const topoTileOptions = { maxDistance: 10000, maxLOD: 15, minLOD: 15 }
+        const topoTileOptions = { maxDistance: 100, maxLOD: 15, minLOD: 15 }
         const topoTileController = new TileControler(url, 'topo', topoTileOptions);
         this._tiles.push(topoTileController);
 
