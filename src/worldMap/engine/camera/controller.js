@@ -63,24 +63,7 @@ class CameraController {
             })
             .start();
     }
-
 }
-
-
-
-/*
-			function render() {
-
-				theta += 0.1;
-
-				camera.position.x = radius * Math.sin( window.THREE.Math.degToRad( theta ) );
-				camera.position.y = radius * Math.sin( window.THREE.Math.degToRad( theta ) );
-				camera.position.z = radius * Math.cos( window.THREE.Math.degToRad( theta ) );
-				camera.lookAt( scene.position );
-
-				renderer.render( scene, camera );
-
-			}*/
 
 const c = new CameraController();
 export default c;

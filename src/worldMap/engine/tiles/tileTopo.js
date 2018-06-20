@@ -8,32 +8,31 @@ import createPolygon from './../geometry/Polygon';
 import reqwest from 'reqwest';
 
 const lineMaterial = new window.THREE.LineBasicMaterial({ color: 0xEAEAEA, linewidth: 1 });
-const polygonMaterial = new window.THREE.MeshLambertMaterial({ color: 0xEBF3ED, emissive: 0xD4DADC, side: window.THREE.DoubleSide });
+
+
+
+function _getRandomColor() {
+  var letters = '0123456789ABCDEF';
+  var color = '0x';
+  for (var i = 0; i < 6; i++) {
+    color += letters[Math.floor(Math.random() * 16)];
+  }
+  return color;
+}
+
 
 export default class TileTopo extends TileAbstract {
   constructor(quadcode, path) {
     super(quadcode);
     this._path = path;
     this._request = null;
+
+    var color = parseInt(_getRandomColor());
+    // console.log('New color : ', color)
+    this._polygonMaterial = new window.THREE.MeshLambertMaterial({ color: color, emissive: color, side: window.THREE.DoubleSide });
+
+
   }
-
-  // _requestTile() {
-  //   return new Promise((resolve, reject) => {
-  //     if(!mesh){
-  //       const file =require('./../../../../assets/map.topojson');
-  //       var request = new XMLHttpRequest();
-  //       request.open("GET", file, false);
-  //       request.send(null)
-  //       console.log('START PARSE')
-  //       var obj = JSON.parse(request.responseText);
-  //       console.log('GET MESH')
-  //       mesh = this.getMeshFromTopo(obj);
-  //     }
-  //     console.log('MESH ',mesh)
-  //     resolve(mesh);
-  //   });
-  // }
-
 
   _requestTile() {
     return new Promise((resolve, reject) => {
@@ -60,7 +59,6 @@ export default class TileTopo extends TileAbstract {
           // reject();
           // console.error(err);
         });
-
     });
   }
 
@@ -82,10 +80,10 @@ export default class TileTopo extends TileAbstract {
       if (type === 'Polygon' || type === 'MultiPolygon') {
         var geometry = createPolygon(coordinates, height);
 
-        var buildingMesh = new window.THREE.Mesh(geometry, polygonMaterial);
+        var buildingMesh = new window.THREE.Mesh(geometry, this._polygonMaterial);
         var geo = new window.THREE.EdgesGeometry(geometry);
         var wireframe = new window.THREE.LineSegments(geo, lineMaterial);
-        // buildingMesh.add(wireframe);
+        buildingMesh.add(wireframe);
         g.add(buildingMesh);
         tag = true;
       }
@@ -127,7 +125,7 @@ export default class TileTopo extends TileAbstract {
     }
 
     tmpGeometry.computeBoundingBox();
-    var buildingMesh = new window.THREE.Mesh(tmpGeometry, polygonMaterial);
+    var buildingMesh = new window.THREE.Mesh(tmpGeometry, this._polygonMaterial);
     // buildingMesh.castShadow = true; //default is false
     // buildingMesh.receiveShadow = true; //default
 
@@ -149,8 +147,28 @@ export default class TileTopo extends TileAbstract {
       collections.push(feature(data, data.objects[tk]));
     }
 
-    const { features } = geojsonMerge(collections);
+    let { features } = geojsonMerge(collections);
+    console.log('got features 1 ', features.length)
 
+    // features = features.filter((e) => e.geometry.type === 'Polygon' );
+    features = features.filter((e) => {
+      if (e.geometry.type === 'Polygon') {
+        if (e.properties.building) {
+          return true
+        } else {
+          return false
+        }
+      }
+      return false
+    });
+    console.log('got features 2', features.length)
+
+    // {
+    //   console.log('eee', e.geometry.type);
+    //   return true;
+    // }) //e.properties.geometry.type === 'polygon')
+
+    // features = features.filter((e) => e.properties.geometry.type === 'polygon');
 
     return this.getUnMergedMesh(features);
 

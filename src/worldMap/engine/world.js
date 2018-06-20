@@ -12,6 +12,8 @@ class World {
 
   setView(latlon) {
     this._originLatlon = latlon;
+
+    console.log('hu',this._originLatlon)
     this._originPoint = this.project(latlon);
   }
 

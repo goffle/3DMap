@@ -1,9 +1,5 @@
 import CameraController from "./../camera/controller";
 
-import ImageTile from './tileImage';
-import TopoTile from './tileTopo';
-import ColorTile from './tileColor';
-import DataTile from './tileData';
 
 import TileCache from './utils/cache';
 
@@ -60,15 +56,17 @@ export default class TileControler {
     _getTile(quadcode) {
         var tile = this._tileCache.getTile(quadcode);
         if (!tile) {
-            if (this._type === 'image') {
-                tile = new ImageTile(quadcode, this._url);
-            } else if (this._type === 'topo') {
-                tile = new TopoTile(quadcode, this._url);
-            } else if (this._type === 'color') {
-                tile = new ColorTile(quadcode);
-            } else if (this._type === 'data') {
-                tile = new DataTile(quadcode);
-            }
+            tile = new this._type(quadcode, this._url);
+
+            // if (this._type === 'image') {
+            //     tile = new ImageTile(quadcode, this._url);
+            // } else if (this._type === 'topo') {
+            //     tile = new TopoTile(quadcode, this._url);
+            // } else if (this._type === 'color') {
+            //     tile = new ColorTile(quadcode);
+            // } else if (this._type === 'data') {
+            //     tile = new DataTile(quadcode);
+            // }
             // Add tile to cache, though it won't be ready yet as the data is being
             // requested from various places asynchronously
             this._tileCache.setTile(quadcode, tile);

@@ -9,6 +9,7 @@ export default class TileImage extends TileAbstract {
   }
 
   _requestTile() {
+    console.log('yo',this._pointScale)
     return this.search(this._centerLatlon.lat, this._centerLatlon.lon);
   }
 
@@ -21,7 +22,6 @@ export default class TileImage extends TileAbstract {
     // cube.position.y = 0;
     return cube;
   }
-
   search(lat, lon) {
 
     return new Promise((resolve, reject) => {
